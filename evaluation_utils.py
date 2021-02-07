@@ -4,8 +4,8 @@ import torch
 from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score, f1_score, \
     log_loss, auc, precision_recall_curve
 # from sklearn.metrics import r2_score, mean_squared_error
-# from scipy.stats import pearsonr, spearmanr
-# import numpy.ma as ma
+from scipy.stats import pearsonr, spearmanr
+import numpy.ma as ma
 from collections import defaultdict
 
 
