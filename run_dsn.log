@@ -1,0 +1,773 @@
+model_save/dsn/train_num_epochs_100_dop_0.0 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+Fine tuning epoch 0
+Unfreezing 25
+Unfreezing 35
+Unfreezing 45
+Fine tuning epoch 50
+Unfreezing 55
+Fine tuning epoch 0
+Unfreezing 25
+Fine tuning epoch 50
+Unfreezing 86
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Unfreezing 1047
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 22
+Unfreezing 32
+Unfreezing 42
+Fine tuning epoch 50
+Unfreezing 52
+Fine tuning epoch 0
+Unfreezing 21
+Unfreezing 31
+Unfreezing 41
+Fine tuning epoch 50
+Unfreezing 51
+Fine tuning epoch 0
+Unfreezing 23
+Unfreezing 33
+Unfreezing 43
+Fine tuning epoch 50
+Unfreezing 53
+model_save/dsn/train_num_epochs_100_dop_0.1 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+Fine tuning epoch 0
+Unfreezing 25
+Unfreezing 35
+Unfreezing 45
+Fine tuning epoch 50
+Unfreezing 55
+Fine tuning epoch 0
+Unfreezing 25
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Unfreezing 188
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Unfreezing 1856
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 21
+Unfreezing 31
+Unfreezing 41
+Fine tuning epoch 50
+Unfreezing 51
+Fine tuning epoch 0
+Unfreezing 21
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Unfreezing 477
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Unfreezing 710
+Unfreezing 720
+Fine tuning epoch 0
+Unfreezing 23
+Unfreezing 33
+Unfreezing 43
+Fine tuning epoch 50
+Unfreezing 53
+model_save/dsn/train_num_epochs_300_dop_0.0 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+AE training epoch 100
+AE training epoch 150
+AE training epoch 200
+AE training epoch 250
+Fine tuning epoch 0
+Unfreezing 16
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Unfreezing 1004
+Unfreezing 1014
+Unfreezing 1024
+Fine tuning epoch 0
+Unfreezing 17
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Unfreezing 485
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Unfreezing 1044
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Unfreezing 36
+Unfreezing 46
+Fine tuning epoch 50
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Unfreezing 1933
+Unfreezing 1943
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Unfreezing 37
+Unfreezing 47
+Fine tuning epoch 50
+model_save/dsn/train_num_epochs_300_dop_0.1 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+AE training epoch 100
+AE training epoch 150
+AE training epoch 200
+AE training epoch 250
+Fine tuning epoch 0
+Unfreezing 16
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Unfreezing 1502
+Unfreezing 1512
+Unfreezing 1522
+Fine tuning epoch 0
+Unfreezing 19
+Fine tuning epoch 50
+Fine tuning epoch 100
+Unfreezing 137
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 17
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Unfreezing 475
+Fine tuning epoch 500
+Unfreezing 506
+Unfreezing 516
+Fine tuning epoch 0
+Unfreezing 18
+Unfreezing 28
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Unfreezing 37
+Unfreezing 47
+Fine tuning epoch 50
+model_save/dsn/train_num_epochs_500_dop_0.0 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+AE training epoch 100
+AE training epoch 150
+AE training epoch 200
+AE training epoch 250
+AE training epoch 300
+AE training epoch 350
+AE training epoch 400
+AE training epoch 450
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Unfreezing 37
+Unfreezing 47
+Fine tuning epoch 50
+Fine tuning epoch 0
+Unfreezing 15
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Unfreezing 776
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Unfreezing 1091
+Fine tuning epoch 1100
+Unfreezing 1101
+Fine tuning epoch 0
+Unfreezing 15
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Unfreezing 204
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Unfreezing 436
+Unfreezing 446
+Fine tuning epoch 450
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Unfreezing 36
+Unfreezing 46
+Fine tuning epoch 50
+model_save/dsn/train_num_epochs_500_dop_0.1 exists!
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+AE training epoch 100
+AE training epoch 150
+AE training epoch 200
+AE training epoch 250
+AE training epoch 300
+AE training epoch 350
+AE training epoch 400
+AE training epoch 450
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Unfreezing 36
+Unfreezing 46
+Fine tuning epoch 50
+Fine tuning epoch 0
+Unfreezing 16
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Unfreezing 491
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Unfreezing 1267
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 17
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Unfreezing 462
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Unfreezing 894
+Fine tuning epoch 900
+Unfreezing 904
+Fine tuning epoch 0
+Unfreezing 17
+Unfreezing 27
+Unfreezing 37
+Unfreezing 47
+Fine tuning epoch 50
+model_save/dsn/AUC exists!
+AE training epoch 0
+AE training epoch 50
+AE training epoch 100
+AE training epoch 150
+AE training epoch 200
+AE training epoch 250
+AE training epoch 300
+AE training epoch 350
+AE training epoch 400
+AE training epoch 450
+AE training epoch 500
+AE training epoch 550
+AE training epoch 600
+AE training epoch 650
+AE training epoch 700
+AE training epoch 750
+AE training epoch 800
+AE training epoch 850
+AE training epoch 900
+AE training epoch 950
+Fine tuning epoch 0
+Fine tuning epoch 50
+Unfreezing 50
+Unfreezing 72
+Unfreezing 82
+Unfreezing 92
+Fine tuning epoch 100
+Fine tuning epoch 0
+Unfreezing 15
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000
+Fine tuning epoch 1050
+Fine tuning epoch 1100
+Fine tuning epoch 1150
+Unfreezing 1194
+Fine tuning epoch 1200
+Fine tuning epoch 1250
+Fine tuning epoch 1300
+Fine tuning epoch 1350
+Fine tuning epoch 1400
+Fine tuning epoch 1450
+Fine tuning epoch 1500
+Fine tuning epoch 1550
+Fine tuning epoch 1600
+Fine tuning epoch 1650
+Fine tuning epoch 1700
+Fine tuning epoch 1750
+Fine tuning epoch 1800
+Fine tuning epoch 1850
+Fine tuning epoch 1900
+Fine tuning epoch 1950
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Unfreezing 36
+Unfreezing 46
+Fine tuning epoch 50
+Fine tuning epoch 0
+Unfreezing 16
+Unfreezing 26
+Fine tuning epoch 50
+Fine tuning epoch 100
+Fine tuning epoch 150
+Fine tuning epoch 200
+Fine tuning epoch 250
+Fine tuning epoch 300
+Fine tuning epoch 350
+Fine tuning epoch 400
+Fine tuning epoch 450
+Fine tuning epoch 500
+Fine tuning epoch 550
+Fine tuning epoch 600
+Fine tuning epoch 650
+Fine tuning epoch 700
+Fine tuning epoch 750
+Fine tuning epoch 800
+Fine tuning epoch 850
+Fine tuning epoch 900
+Fine tuning epoch 950
+Fine tuning epoch 1000

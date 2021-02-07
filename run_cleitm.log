@@ -1,0 +1,11 @@
+----Autoencoder Training Epoch 0 ----
+Traceback (most recent call last):
+  File "hyper_main.py", line 195, in <module>
+    main(args=args, update_params_dict=param_dict)
+  File "hyper_main.py", line 133, in main
+    **wrap_training_params(training_params, type='unlabeled'))
+  File "/CLEIT/train_cleitm.py", line 87, in train_cleitm
+    history=ae_eval_train_history)
+  File "/CLEIT/train_cleitm.py", line 27, in cleit_train_step
+    code_loss = mmd_loss(x_g_code, transmitter(x_m_code))
+TypeError: mmd_loss() missing 1 required positional argument: 'device'
