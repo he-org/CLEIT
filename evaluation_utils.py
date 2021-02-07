@@ -92,14 +92,14 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history=None
         # output prediction
         raise NotImplementedError
     else:
-        # history['dpearsonr'].append(np.mean([pearsonr(y_truths[:, i][~ma.masked_invalid(y_truths[:, i]).mask],
-        #                                               y_preds[:, i][~ma.masked_invalid(y_truths[:, i]).mask])[0]
-        #                                      for i in range(y_truths.shape[1])]).item())
-        # history['cpearsonr'].append(np.mean([pearsonr(y_truths[i, :][~ma.masked_invalid(y_truths[i, :]).mask],
-        #                                               y_preds[i, :][~ma.masked_invalid(y_truths[i, :]).mask])[0]
-        #                                      for i in range(y_truths.shape[0])]).item())
-        history['cpearsonr'].append(pd.DataFrame(y_truths).corrwith(pd.DataFrame(y_preds), axis=1).mean())
-        history['dpearsonr'].append(pd.DataFrame(y_truths).corrwith(pd.DataFrame(y_preds), axis=0).mean())
+        history['dpearsonr'].append(np.mean([pearsonr(y_truths[:, i][~ma.masked_invalid(y_truths[:, i]).mask],
+                                                      y_preds[:, i][~ma.masked_invalid(y_truths[:, i]).mask])[0]
+                                             for i in range(y_truths.shape[1])]).item())
+        history['cpearsonr'].append(np.mean([pearsonr(y_truths[i, :][~ma.masked_invalid(y_truths[i, :]).mask],
+                                                      y_preds[i, :][~ma.masked_invalid(y_truths[i, :]).mask])[0]
+                                             for i in range(y_truths.shape[0])]).item())
+        # history['cpearsonr'].append(pd.DataFrame(y_truths).corrwith(pd.DataFrame(y_preds), axis=1).mean())
+        # history['dpearsonr'].append(pd.DataFrame(y_truths).corrwith(pd.DataFrame(y_preds), axis=0).mean())
         history['drmse'].append(np.mean(np.nanmean(np.square((y_truths-y_preds)), axis=0)).item())
         history['crmse'].append(np.mean(np.nanmean(np.square((y_truths-y_preds)), axis=1)).item())
         # history['pearsonr'].append(pearsonr(y_truths, y_preds)[0])
