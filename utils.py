@@ -1,9 +1,10 @@
 import os
 import pandas as pd
-#import matplotlib.pyplot as plt
-
+import matplotlib.pyplot as plt
+import copy
 import traceback
 import contextlib
+import torch.nn as nn
 
 # Some helper code to demonstrate the kinds of errors you might encounter.
 @contextlib.contextmanager
@@ -62,3 +63,7 @@ def list_to_repr(nums):
         result += repr(num) + '_'
 
     return result
+
+def clones(module, N):
+    "Produce N identical layers."
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])

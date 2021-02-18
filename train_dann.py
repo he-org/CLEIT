@@ -48,13 +48,6 @@ def classification_train_step(classifier, s_batch, t_batch, loss_fn, device, opt
     truths = torch.cat((torch.zeros(s_x.shape[0], 1), torch.ones(t_x.shape[0], 1)), dim=0).to(device)
     loss = loss_fn(outputs, truths)
 
-    # valid = torch.ones((s_x.shape[0], 1)).to(device)
-    # fake = torch.zeros((t_x.shape[0], 1)).to(device)
-    #
-    # real_loss = loss_fn((classifier(s_x)), valid)
-    # fake_loss = loss_fn(classifier(t_x), fake)
-    # loss = 0.5 * (real_loss + fake_loss)
-
     optimizer.zero_grad()
     loss.backward()
     #     if clip is not None:
