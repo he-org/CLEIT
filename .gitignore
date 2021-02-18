@@ -3,7 +3,6 @@ saved_weights/*
 multi-omics-data-processing/*
 *.ipynb
 figs/*.ps
-predictions/
 history/
 mlp_test/*
 .idea/*
