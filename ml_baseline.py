@@ -203,7 +203,7 @@ def multi_regress(train_data, output_file_name, model_fn=regress_with_enet, test
                 train_pred_df.loc[y.index[test_index], drug] = trained_model.predict(scaler.transform(X_test))
             except Exception as e:
                 print(e)
-
+        assert all(train_pred_df.index==train_target_df.index)
         train_pred_df.to_csv(f'./predictions/{output_file_name}.csv', index_label='Sample')
 
         if test_data is not None:
@@ -214,10 +214,12 @@ def multi_regress(train_data, output_file_name, model_fn=regress_with_enet, test
                 test_pred_df.loc[test_feature_df.index, drug] = trained_model.predict(scaler.transform(test_feature_df))
             except Exception as e:
                 print(e)
+            assert all(test_pred_df.index == test_target_df.index)
             test_pred_df.to_csv(f'./predictions/test_{output_file_name}.csv', index_label='Sample')
 
-    return (train_target_df, train_pred_df) if test_data is None else (
-        train_target_df, train_pred_df, test_target_df, test_pred_df)
+
+    return (train_target_df.values, train_pred_df.values) if test_data is None else (
+        train_target_df.values, train_pred_df.values, test_target_df.values, test_pred_df.values)
 
 
 def n_time_cv_regress(train_data, output_file_name, n=5, model_fn=regress_with_enet, test_data=None, random_state=2020):

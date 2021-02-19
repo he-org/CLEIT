@@ -271,8 +271,13 @@ class DataProvider:
     def get_labeled_samples(self):
         labeled_samples = self.gex_dat.index.intersection(self.target_df.index)
         labeled_samples = self.ccle_mut_dat.index.intersection(labeled_samples)
+        labeled_target_df = self.target_df.loc[labeled_samples]
+        labeled_samples = labeled_samples[labeled_target_df.shape[1] - labeled_target_df.isna().sum(axis=1) >= 2]
+
         mut_only_labeled_samples = self.mut_dat.index.intersection(self.target_df.index)
         mut_only_labeled_samples = mut_only_labeled_samples.difference(labeled_samples)
+        mut_only_labeled_target_df = self.target_df.loc[mut_only_labeled_samples]
+        mut_only_labeled_samples = mut_only_labeled_samples[mut_only_labeled_target_df.shape[1] - mut_only_labeled_target_df.isna().sum(axis=1) >= 2]
 
         return labeled_samples, mut_only_labeled_samples
 
