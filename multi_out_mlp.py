@@ -1,6 +1,13 @@
 from torch import nn
 from types_ import *
 from typing import List
+import copy
+from mlp import MLP
+
+
+def clones(module, N):
+    "Produce N identical layers."
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 class MLP(nn.Module):
 
