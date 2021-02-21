@@ -128,6 +128,39 @@ class DataProvider:
                                             shuffle=True)
         return labeled_gex_dataloader
 
+    def get_labeled_mut_dataloader(self):
+        gex_labeled_samples = self.gex_dat.index.intersection(self.target_df.index)
+        mut_labeled_samples = self.ccle_mut_dat.index.intersection(self.target_df.index)
+        mut_only_labeled_samples = mut_labeled_samples.difference(gex_labeled_samples)
+        mut_labeled_samples = mut_labeled_samples.difference(mut_only_labeled_samples)
+
+        mut_target_df = self.target_df.loc[mut_labeled_samples]
+        mut_labeled_samples = mut_labeled_samples[mut_target_df.shape[1] - mut_target_df.isna().sum(axis=1) >= 2]
+        mut_target_df = self.target_df.loc[mut_labeled_samples]
+
+        mut_only_target_df = self.target_df.loc[mut_only_labeled_samples]
+        mut_only_labeled_samples = mut_only_labeled_samples[
+            mut_only_target_df.shape[1] - mut_only_target_df.isna().sum(axis=1) >= 2]
+        mut_only_target_df = self.target_df.loc[mut_only_labeled_samples]
+
+        labeled_mut_dataset = TensorDataset(
+            torch.from_numpy(self.ccle_mut_dat.loc[mut_labeled_samples].values.astype('float32')),
+            torch.from_numpy(mut_target_df.values.astype('float32'))
+        )
+        labeled_mut_dataloader = DataLoader(labeled_mut_dataset,
+                                            batch_size=self.batch_size,
+                                            shuffle=True)
+        labeled_drug_mut_only_dataset = TensorDataset(
+            torch.from_numpy(self.ccle_mut_dat.loc[mut_only_labeled_samples].values.astype('float32')),
+            torch.from_numpy(mut_only_target_df.values.astype('float32'))
+        )
+
+        labeled_drug_mut_only_dataloader = DataLoader(labeled_drug_mut_only_dataset,
+                                                      batch_size=self.batch_size,
+                                                      shuffle=True)
+
+        return labeled_mut_dataloader, labeled_drug_mut_only_dataloader
+
     def get_drug_labeled_gex_dataloader(self, drug=None, ft_flag=True):
         # drug = DRUG_DICT[drug]
         # drug_target_df = self.target_df[drug]

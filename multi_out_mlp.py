@@ -1,8 +1,9 @@
 from torch import nn
 from types_ import *
 from typing import List
-import copy
 from mlp import MLP
+import copy
+import torch
 
 
 def clones(module, N):
