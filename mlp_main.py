@@ -2,10 +2,10 @@ from evaluation_utils import evaluate_target_regression_epoch, model_save_check
 from collections import defaultdict
 from itertools import chain
 from mlp import MLP
-from mask_mlp import MaskMLP
+from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 from loss_and_metrics import masked_mse, masked_simse
-from vae import VAE
+from ae import AE
 from data import DataProvider
 import torch
 import json
@@ -41,15 +41,15 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, task_save_folder, 
                       metric_name='dpearsonr',
                       normalize_flag=False, **kwargs):
 
-    autoencoder = VAE(input_dim=kwargs['input_dim'],
+    autoencoder = AE(input_dim=kwargs['input_dim'],
                       latent_dim=kwargs['latent_dim'],
                       hidden_dims=kwargs['encoder_hidden_dims'],
                       dop=kwargs['dop']).to(kwargs['device'])
     encoder = autoencoder.encoder
 
-    target_decoder = MaskMLP(input_dim=kwargs['latent_dim'],
-                             output_dim=kwargs['output_dim'],
-                             hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+                           output_dim=kwargs['output_dim'],
+                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder,
