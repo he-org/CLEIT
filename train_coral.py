@@ -4,66 +4,30 @@ from loss_and_metrics import cov
 from collections import defaultdict
 from ae import AE
 from evaluation_utils import model_save_check
+from loss_and_metrics import masked_simse
 
 
-def eval_ae_epoch(ae, s_dataloader, t_dataloader, device, history):
-    ae.eval()
-    avg_loss_dict = defaultdict(float)
-    s_codes = None
-    t_codes = None
-
-    for x_batch in s_dataloader:
-        x_batch = x_batch[0].to(device)
-        with torch.no_grad():
-            s_code = ae.encode(x_batch)
-            # s_codes = s_code.cpu().detach().numpy() if s_codes is None else np.concatenate([s_codes, s_code.cpu().detach().numpy()], axis=0)
-            s_codes = s_code if s_codes is None else torch.cat((s_codes, s_code))
-            loss_dict = ae.loss_function(*(ae(x_batch)))
-            for k, v in loss_dict.items():
-                avg_loss_dict[k] += v.cpu().detach().item() / len(s_dataloader)
-
-    for x_batch in t_dataloader:
-        x_batch = x_batch[0].to(device)
-        with torch.no_grad():
-            t_code = ae.encode(x_batch)
-            # t_codes = t_code.cpu().detach().numpy() if t_codes is None else np.concatenate([t_codes, t_code.cpu().detach().numpy()], axis=0)
-            t_codes = t_code if t_codes is None else torch.cat((t_codes, t_code))
-
-            loss_dict = ae.loss_function(*(ae(x_batch)))
-            for k, v in loss_dict.items():
-                avg_loss_dict[k] += v.cpu().detach().item() / len(t_dataloader)
-
-    for k, v in avg_loss_dict.items():
-        history[k].append(v)
-
-    history['coral_loss'].append(((torch.square(torch.norm(cov(s_codes) - cov(t_codes), p='fro'))) / (
-            4 * (s_codes.size()[-1] ** 2))).cpu().detach().numpy().ravel())
-    # history['coral_loss'].append((torch.square(torch.norm(cov(s_codes)-cov(t_codes), p='fro'))).cpu().detach().numpy().ravel())
-    history['loss'][-1] += history['coral_loss'][-1]
-
-    return history
-
-
-def coral_ae_train_step(ae, s_batch, t_batch, device, optimizer, alpha, history, scheduler=None):
-    ae.zero_grad()
-    ae.train()
+def coral_train_step(model, s_batch, t_batch, device, optimizer, alpha, history, scheduler=None):
+    model.zero_grad()
+    model.train()
 
     s_x = s_batch[0].to(device)
-    t_x = t_batch[0].to(device)
+    s_y = s_batch[1].to(device)
 
-    s_code = ae.encode(s_x)
-    t_code = ae.encode(t_x)
+    t_x = t_batch[0].to(device)
+    t_y = t_batch[1].to(device)
+
+    s_code = model.encode(s_x)
+    t_code = model.encode(t_x)
+
     s_cov = cov(s_code)
     t_cov = cov(t_code)
 
     coral_loss = (torch.square(torch.norm(s_cov - t_cov, p='fro'))) / (4 * (s_code.size()[-1] ** 2))
     # coral_loss = torch.square(torch.norm(s_cov-t_cov, p='fro'))
 
-    s_loss_dict = ae.loss_function(*ae(s_x))
-    t_loss_dict = ae.loss_function(*ae(t_x))
+    loss = masked_simse(preds=model(s_x), labels=s_y) + masked_simse(preds=model(t_x), labels=t_y) + alpha * coral_loss
 
-    optimizer.zero_grad()
-    loss = s_loss_dict['loss'] + t_loss_dict['loss'] + alpha * coral_loss
     optimizer.zero_grad()
 
     loss.backward()
@@ -71,11 +35,7 @@ def coral_ae_train_step(ae, s_batch, t_batch, device, optimizer, alpha, history,
     if scheduler is not None:
         scheduler.step()
 
-    loss_dict = {k: v.cpu().detach().item() + t_loss_dict[k].cpu().detach().item() for k, v in s_loss_dict.items()}
-
-    for k, v in loss_dict.items():
-        history[k].append(v)
-
+    history['loss'].append(loss.cpu().detach().item())
     history['coral_loss'].append(coral_loss.cpu().detach().item())
 
     return history

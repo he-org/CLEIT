@@ -2,7 +2,7 @@ from evaluation_utils import evaluate_target_regression_epoch, model_save_check
 from collections import defaultdict
 from itertools import chain
 from mlp import MLP
-from mask_mlp import MaskMLP
+from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 from torch.nn import functional as F
 from loss_and_metrics import masked_mse, masked_simse
@@ -76,9 +76,9 @@ def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save
                       metric_name='dpearsonr',
                       normalize_flag=False, **kwargs):
 
-    target_decoder = MaskMLP(input_dim=kwargs['latent_dim'],
-                             output_dim=kwargs['output_dim'],
-                             hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+                           output_dim=kwargs['output_dim'],
+                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder,
@@ -153,9 +153,9 @@ def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save
 def fine_tune_encoder_new(encoder, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
                           metric_name='dpearsonr',
                           normalize_flag=False, **kwargs):
-    target_decoder = MaskMLP(input_dim=kwargs['latent_dim'],
-                             output_dim=kwargs['output_dim'],
-                             hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+                           output_dim=kwargs['output_dim'],
+                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder,
