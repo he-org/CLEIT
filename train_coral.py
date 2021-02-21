@@ -108,7 +108,7 @@ def train_coral(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, m
 
         save_flag, stop_flag = model_save_check(history=target_regression_eval_val_history,
                                                 metric_name=metric_name,
-                                                tolerance_count=10)
+                                                tolerance_count=50)
         if save_flag:
             torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], 'coral_regressor.pt'))
         if stop_flag:
