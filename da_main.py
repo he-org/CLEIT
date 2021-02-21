@@ -64,7 +64,7 @@ def dict_to_str(d):
     return "_".join(["_".join([k, str(v)]) for k, v in d.items()])
 
 
-def main(args, update_params_dict):
+def main(args):
     if args.method == 'dann':
         train_fn = train_dann.train_dann
     elif args.method == 'adda':
