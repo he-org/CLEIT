@@ -156,7 +156,7 @@ class DataProvider:
 
                 train_labeled_dataloader = DataLoader(train_labeled_dateset,
                                                       batch_size=self.batch_size,
-                                                      shuffle=True)
+                                                      shuffle=True, drop_last=True)
 
                 test_labeled_dataloader = DataLoader(test_labeled_dateset,
                                                      batch_size=self.batch_size,
@@ -276,7 +276,7 @@ class DataProvider:
 
                 train_labeled_dataloader = DataLoader(train_labeled_dateset,
                                                       batch_size=self.batch_size,
-                                                      shuffle=True)
+                                                      shuffle=True,drop_last=True)
 
                 test_labeled_dataloader = DataLoader(test_labeled_dateset,
                                                      batch_size=self.batch_size,
