@@ -4,7 +4,7 @@ from collections import defaultdict
 from loss_and_metrics import mmd_loss
 from ae import AE
 from evaluation_utils import model_save_check, evaluate_target_regression_epoch
-from loss_and_metrics import masked_simse
+from loss_and_metrics import masked_simse,masked_mse
 from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 
@@ -22,7 +22,7 @@ def dcc_train_step(model, s_batch, t_batch, device, optimizer, alpha, history, s
     t_code = model.encode(t_x)
 
     m_loss = mmd_loss(source_features=s_code, target_features=t_code, device=device)
-    loss = masked_simse(preds=model(s_x), labels=s_y) + masked_simse(preds=model(t_x), labels=t_y) + alpha * m_loss
+    loss = masked_mse(preds=model(s_x), labels=s_y) + masked_mse(preds=model(t_x), labels=t_y) + alpha * m_loss
 
     optimizer.zero_grad()
 

@@ -4,7 +4,7 @@ from loss_and_metrics import cov
 from collections import defaultdict
 from ae import AE
 from evaluation_utils import model_save_check, evaluate_target_regression_epoch
-from loss_and_metrics import masked_simse
+from loss_and_metrics import masked_simse,masked_mse
 from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 
@@ -28,7 +28,7 @@ def coral_train_step(model, s_batch, t_batch, device, optimizer, alpha, history,
     coral_loss = (torch.square(torch.norm(s_cov - t_cov, p='fro'))) / (4 * (s_code.size()[-1] ** 2))
     # coral_loss = torch.square(torch.norm(s_cov-t_cov, p='fro'))
 
-    loss = masked_simse(preds=model(s_x), labels=s_y) + masked_simse(preds=model(t_x), labels=t_y) + alpha * coral_loss
+    loss = masked_mse(preds=model(s_x), labels=s_y) + masked_mse(preds=model(t_x), labels=t_y) + alpha * coral_loss
 
     optimizer.zero_grad()
 

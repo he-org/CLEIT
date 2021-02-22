@@ -46,7 +46,7 @@ def masked_simse(preds, labels, null_val=np.nan):
     diffs = torch.where(torch.isnan(diffs), torch.zeros_like(diffs), diffs)
     penalty = torch.sum(torch.square(torch.sum(diffs, dim=0, keepdim=True)) / torch.square(mask_k)) / mask.shape[1]
 
-    return mse_loss - penalty
+    return mse_loss - 0.1*penalty
 
 
 def cov(m, rowvar=False):

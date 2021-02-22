@@ -18,7 +18,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
 
     x = batch[0].to(device)
     y = batch[1].to(device)
-    loss = masked_mse(preds=model(x), labels=y)
+    loss = masked_simse(preds=model(x), labels=y)
     optimizer.zero_grad()
     loss.backward()
     if clip is not None:

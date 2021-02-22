@@ -5,7 +5,7 @@ from mlp import MLP
 import torch
 from collections import defaultdict
 from evaluation_utils import model_save_check, evaluate_target_regression_epoch
-from loss_and_metrics import masked_simse
+from loss_and_metrics import masked_simse, masked_mse
 from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 
@@ -88,7 +88,7 @@ def gan_gen_train_step(critic, model, s_batch, t_batch, device, optimizer, alpha
     optimizer.zero_grad()
     gen_loss = -torch.mean(critic(t_code))
 
-    loss = masked_simse(preds=model(s_x), labels=s_y) + masked_simse(preds=model(t_x), labels=t_y) + alpha * gen_loss
+    loss = masked_mse(preds=model(s_x), labels=s_y) + masked_mse(preds=model(t_x), labels=t_y) + alpha * gen_loss
     optimizer.zero_grad()
 
     loss.backward()

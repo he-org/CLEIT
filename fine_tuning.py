@@ -52,7 +52,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     #                     for i in range(y.shape[0])])
     #
     # loss = (mse_loss-penalty_term) / y.shape[0]
-    loss = masked_simse(preds=model(x), labels=y)
+    loss = masked_mse(preds=model(x), labels=y)
     optimizer.zero_grad()
     loss.backward()
     if clip is not None:

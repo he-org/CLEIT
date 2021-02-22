@@ -6,7 +6,7 @@ from ae import AE
 from mlp import MLP
 from itertools import chain
 from evaluation_utils import model_save_check, evaluate_target_regression_epoch
-from loss_and_metrics import masked_simse
+from loss_and_metrics import masked_simse, masked_mse
 from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 
@@ -28,7 +28,7 @@ def dann_train_step(classifier, model, s_batch, t_batch, loss_fn, device, optimi
     outputs = torch.cat((classifier(s_x), classifier(t_x)), dim=0)
     truths = torch.cat((torch.zeros(s_x.shape[0], 1), torch.ones(t_x.shape[0], 1)), dim=0).to(device)
     dann_loss = loss_fn(outputs, truths)
-    loss = masked_simse(preds=model(s_x), labels=s_y) + masked_simse(preds=model(t_x), labels=t_y) + alpha * dann_loss
+    loss = masked_mse(preds=model(s_x), labels=s_y) + masked_mse(preds=model(t_x), labels=t_y) + alpha * dann_loss
 
     optimizer.zero_grad()
     loss.backward()
