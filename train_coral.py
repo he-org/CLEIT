@@ -113,6 +113,8 @@ def train_coral(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, m
             torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], 'coral_regressor.pt'))
         if stop_flag:
             break
+    target_regressor.load_state_dict(
+        torch.load(os.path.join(kwargs['model_save_folder'], 'coral_regressor.pt')))
 
     return target_regressor, (
         train_history, s_target_regression_eval_train_history, t_target_regression_eval_train_history,
