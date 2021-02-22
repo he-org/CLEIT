@@ -69,11 +69,6 @@ def main(args, update_params_dict):
         training_params = json.load(f)
 
     training_params['unlabeled'].update(update_params_dict)
-    #patching
-    if args.omics == 'gex':
-        training_params['labeled']['train_num_epochs'] = update_params_dict['ftrain_num_epochs']
-        f_epoch = update_params_dict.pop('ftrain_num_epochs')
-
     param_str = dict_to_str(update_params_dict)
 
     training_params.update(
@@ -84,11 +79,7 @@ def main(args, update_params_dict):
             'retrain_flag': args.retrain_flag
         })
     safe_make_dir(training_params['model_save_folder'])
-    if args.omics == 'mut':
-        task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, 'labeled')
-    else:
-        task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, f'ftrain_num_epochs_{f_epoch}')
-
+    task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, 'labeled')
     safe_make_dir(task_save_folder)
 
     random.seed(2020)
@@ -122,12 +113,11 @@ def main(args, update_params_dict):
 
     ft_evaluation_metrics = defaultdict(list)
     if args.omics == 'gex':
-        labeled_dataloader_generator = data_provider.get_drug_labeled_gex_dataloader()
+        labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics='gex')
         fold_count = 0
         for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
             ft_encoder = deepcopy(encoder)
-
-            target_regressor, ft_historys = fine_tuning.fine_tune_encoder_new(
+            target_regressor, ft_historys = fine_tuning.fine_tune_encoder(
                 encoder=ft_encoder,
                 train_dataloader=train_labeled_dataloader,
                 val_dataloader=val_labeled_dataloader,
@@ -138,16 +128,15 @@ def main(args, update_params_dict):
                 **wrap_training_params(training_params, type='labeled')
             )
             for metric in ['dpearsonr', 'drmse', 'cpearsonr', 'crmse']:
-                ft_evaluation_metrics[metric].append(ft_historys[-1][metric][-1])
+                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
             fold_count += 1
     else:
-        labeled_dataloader_generator = data_provider.get_drug_labeled_mut_dataloader()
+        labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics='mut')
         fold_count = 0
         test_ft_evaluation_metrics = defaultdict(list)
 
         for train_labeled_dataloader, val_labeled_dataloader, test_labeled_dataloader in labeled_dataloader_generator:
             ft_encoder = deepcopy(encoder)
-
             target_regressor, ft_historys = fine_tuning.fine_tune_encoder(
                 encoder=ft_encoder,
                 train_dataloader=train_labeled_dataloader,
@@ -159,8 +148,8 @@ def main(args, update_params_dict):
                 **wrap_training_params(training_params, type='labeled')
             )
             for metric in ['dpearsonr', 'drmse', 'cpearsonr', 'crmse']:
-                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][-1])
-                test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][-1])
+                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
+                test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
             fold_count += 1
         with open(os.path.join(task_save_folder, f'{param_str}_test_ft_evaluation_results.json'), 'w') as f:
             json.dump(test_ft_evaluation_metrics, f)
@@ -187,11 +176,8 @@ if __name__ == '__main__':
         #"pretrain_num_epochs": [0, 50, 100, 200, 300],
         #"train_num_epochs": [100, 300, 500, 1000, 2000, 3000, 5000],
         "train_num_epochs": [100, 300, 500, 1000, 2000, 3000, 5000],
-        "dop": [0.0, 0.1],
-        "ftrain_num_epochs": [100, 200, 300, 500, 750, 1000]
+        "dop": [0.0, 0.1]
     }
-    if args.omics == 'mut':
-        params_grid.pop('ftrain_num_epochs')
 
     keys, values = zip(*params_grid.items())
     update_params_dict_list = [dict(zip(keys, v)) for v in itertools.product(*values)]

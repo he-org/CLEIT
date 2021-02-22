@@ -113,6 +113,82 @@ class DataProvider:
 
         return unlabeled_gex_dataloader
 
+    def get_labeled_data_generator(self, omics='mut'):
+        labeled_samples = self.gex_dat.index.intersection(self.target_df.index)
+        labeled_samples = self.ccle_mut_dat.index.intersection(labeled_samples)
+        labeled_target_df = self.target_df.loc[labeled_samples]
+        labeled_samples = labeled_samples[labeled_target_df.shape[1] - labeled_target_df.isna().sum(axis=1) >= 2]
+
+        mut_only_labeled_samples = self.mut_dat.index.intersection(self.target_df.index)
+        mut_only_labeled_samples = mut_only_labeled_samples.difference(labeled_samples)
+        mut_only_labeled_target_df = self.target_df.loc[mut_only_labeled_samples]
+        mut_only_labeled_samples = mut_only_labeled_samples[
+            mut_only_labeled_target_df.shape[1] - mut_only_labeled_target_df.isna().sum(axis=1) >= 2]
+
+        labeled_drug_mut_only_dataset = TensorDataset(
+            torch.from_numpy(self.ccle_mut_dat.loc[mut_only_labeled_samples].values.astype('float32')),
+            torch.from_numpy(mut_only_labeled_target_df.values.astype('float32'))
+        )
+
+        labeled_drug_mut_only_dataloader = DataLoader(labeled_drug_mut_only_dataset,
+                                                      batch_size=self.batch_size,
+                                                      shuffle=True)
+
+        sample_label_vec = (
+                    labeled_target_df.isna().sum(axis=1) <= labeled_target_df.isna().sum(axis=1).median()).astype('int')
+        s_kfold = StratifiedKFold(n_splits=5, random_state=self.seed)
+
+        if omics == 'gex':
+            for train_index, test_index in s_kfold.split(self.gex_dat.loc[labeled_samples].values,
+                                                         sample_label_vec):
+                train_labeled_df, test_labeled_df = self.gex_dat.loc[labeled_samples].values[train_index], \
+                                                    self.gex_dat.loc[labeled_samples].values[test_index]
+                train_labels, test_labels = labeled_target_df.values[train_index].astype('float32'), \
+                                            labeled_target_df.values[
+                                                test_index].astype('float32')
+
+                train_labeled_dateset = TensorDataset(
+                    torch.from_numpy(train_labeled_df.astype('float32')),
+                    torch.from_numpy(train_labels))
+                test_labeled_dateset = TensorDataset(
+                    torch.from_numpy(test_labeled_df.astype('float32')),
+                    torch.from_numpy(test_labels))
+
+                train_labeled_dataloader = DataLoader(train_labeled_dateset,
+                                                      batch_size=self.batch_size,
+                                                      shuffle=True)
+
+                test_labeled_dataloader = DataLoader(test_labeled_dateset,
+                                                     batch_size=self.batch_size,
+                                                     shuffle=True)
+
+                yield train_labeled_dataloader, test_labeled_dataloader
+        else:
+            for train_index, test_index in s_kfold.split(self.ccle_mut_dat.loc[labeled_samples].values,
+                                                         sample_label_vec):
+                train_labeled_df, test_labeled_df = self.ccle_mut_dat.loc[labeled_samples].values[train_index], \
+                                                    self.ccle_mut_dat.loc[labeled_samples].values[test_index]
+                train_labels, test_labels = labeled_target_df.values[train_index].astype('float32'), \
+                                            labeled_target_df.values[
+                                                test_index].astype('float32')
+
+                train_labeled_dateset = TensorDataset(
+                    torch.from_numpy(train_labeled_df.astype('float32')),
+                    torch.from_numpy(train_labels))
+                test_labeled_dateset = TensorDataset(
+                    torch.from_numpy(test_labeled_df.astype('float32')),
+                    torch.from_numpy(test_labels))
+
+                train_labeled_dataloader = DataLoader(train_labeled_dateset,
+                                                      batch_size=self.batch_size,
+                                                      shuffle=True, drop_last=True)
+
+                test_labeled_dataloader = DataLoader(test_labeled_dateset,
+                                                     batch_size=self.batch_size,
+                                                     shuffle=True)
+
+                yield train_labeled_dataloader, test_labeled_dataloader, labeled_drug_mut_only_dataloader
+
     def get_labeled_gex_dataloader(self):
         gex_labeled_samples = self.gex_dat.index.intersection(self.target_df.index)
         gex_target_df = self.target_df.loc[gex_labeled_samples]
@@ -272,7 +348,7 @@ class DataProvider:
 
                 train_labeled_dataloader = DataLoader(train_labeled_dateset,
                                                       batch_size=self.batch_size,
-                                                      shuffle=True,drop_last=True)
+                                                      shuffle=True, drop_last=True)
 
                 test_labeled_dataloader = DataLoader(test_labeled_dateset,
                                                      batch_size=self.batch_size,
@@ -303,7 +379,6 @@ class DataProvider:
 
             return unlabeled_mut_dataloader
 
-
     def get_labeled_samples(self):
         labeled_samples = self.gex_dat.index.intersection(self.target_df.index)
         labeled_samples = self.ccle_mut_dat.index.intersection(labeled_samples)
@@ -313,13 +388,7 @@ class DataProvider:
         mut_only_labeled_samples = self.mut_dat.index.intersection(self.target_df.index)
         mut_only_labeled_samples = mut_only_labeled_samples.difference(labeled_samples)
         mut_only_labeled_target_df = self.target_df.loc[mut_only_labeled_samples]
-        mut_only_labeled_samples = mut_only_labeled_samples[mut_only_labeled_target_df.shape[1] - mut_only_labeled_target_df.isna().sum(axis=1) >= 2]
+        mut_only_labeled_samples = mut_only_labeled_samples[
+            mut_only_labeled_target_df.shape[1] - mut_only_labeled_target_df.isna().sum(axis=1) >= 2]
 
         return labeled_samples, mut_only_labeled_samples
-
-
-
-
-
-
-
