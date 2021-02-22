@@ -1,31 +1,36 @@
 import torch
 from torch.autograd import Function
 
-class GradientReversalFunction(Function):
-    """
-    Gradient Reversal Layer from:
-    Unsupervised Domain Adaptation by Backpropagation (Ganin & Lempitsky, 2015)
-    Forward pass is the identity function. In the backward pass,
-    the upstream gradients are multiplied by -lambda (i.e. gradient is reversed)
-    """
+
+class RevGrad(Function):
+    @staticmethod
+    def forward(ctx, input_, alpha_):
+        ctx.save_for_backward(input_, alpha_)
+        output = input_
+        return output
 
     @staticmethod
-    def forward(ctx, x, lambda_):
-        ctx.lambda_ = lambda_
-        return x.clone()
-
-    @staticmethod
-    def backward(ctx, grads):
-        lambda_ = ctx.lambda_
-        lambda_ = grads.new_tensor(lambda_)
-        dx = -lambda_ * grads
-        return dx, None
+    def backward(ctx, grad_output):  # pragma: no cover
+        grad_input = None
+        _, alpha_ = ctx.saved_tensors
+        if ctx.needs_input_grad[0]:
+            grad_input = -grad_output * alpha_
+        return grad_input, None
 
 
-class GradientReversal(torch.nn.Module):
-    def __init__(self, lambda_=1):
-        super(GradientReversal, self).__init__()
-        self.lambda_ = lambda_
+revgrad = RevGrad.apply
 
-    def forward(self, x):
-        return GradientReversalFunction.apply(x, self.lambda_)
+
+class RevGrad(torch.nn.Module):
+    def __init__(self, alpha=1., *args, **kwargs):
+        """
+        A gradient reversal layer.
+        This layer has no parameters, and simply reverses the gradient
+        in the backward pass.
+        """
+        super().__init__(*args, **kwargs)
+
+        self._alpha = torch.tensor(alpha, requires_grad=False)
+
+    def forward(self, input_):
+        return revgrad(input_, self._alpha)

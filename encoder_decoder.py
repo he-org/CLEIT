@@ -1,6 +1,6 @@
 import torch.nn as nn
 from types_ import *
-from gradient_reversal import GradientReversal
+from gradient_reversal import RevGrad
 
 class EncoderDecoder(nn.Module):
 
@@ -17,7 +17,7 @@ class EncoderDecoder(nn.Module):
             encoded_input = nn.functional.normalize(encoded_input, p=2, dim=1)
         if self.gr_flag:
             self.decoder = nn.Sequential(
-                GradientReversal(),
+                RevGrad(),
                 self.decoder
             )
         output = self.decoder(encoded_input)
