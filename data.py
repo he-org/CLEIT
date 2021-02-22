@@ -118,12 +118,14 @@ class DataProvider:
         labeled_samples = self.ccle_mut_dat.index.intersection(labeled_samples)
         labeled_target_df = self.target_df.loc[labeled_samples]
         labeled_samples = labeled_samples[labeled_target_df.shape[1] - labeled_target_df.isna().sum(axis=1) >= 2]
+        labeled_target_df = self.target_df.loc[labeled_samples]
 
         mut_only_labeled_samples = self.mut_dat.index.intersection(self.target_df.index)
         mut_only_labeled_samples = mut_only_labeled_samples.difference(labeled_samples)
         mut_only_labeled_target_df = self.target_df.loc[mut_only_labeled_samples]
         mut_only_labeled_samples = mut_only_labeled_samples[
             mut_only_labeled_target_df.shape[1] - mut_only_labeled_target_df.isna().sum(axis=1) >= 2]
+        mut_only_labeled_target_df = self.target_df.loc[mut_only_labeled_samples]
 
         labeled_drug_mut_only_dataset = TensorDataset(
             torch.from_numpy(self.ccle_mut_dat.loc[mut_only_labeled_samples].values.astype('float32')),
