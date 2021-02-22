@@ -1,4 +1,3 @@
-import pandas as pd
 import torch
 import json
 import os
@@ -9,11 +8,7 @@ from collections import defaultdict
 import itertools
 
 from data import DataProvider
-import train_coral
 import train_dsn
-import train_dann
-import train_dcc
-import train_adda
 import train_cleit
 import train_cleitm
 import train_cleita
@@ -77,20 +72,10 @@ def main(args, update_params_dict):
         train_fn = train_cleita.train_cleita
     elif args.method == 'cleitc':
         train_fn = train_cleitc.train_cleitc
-    elif args.method == 'coral':
-        train_fn = train_coral.train_coral
     elif args.method == 'dsn':
         train_fn = train_dsn.train_dsn
-    elif args.method == 'dann':
-        train_fn = train_dann.train_dann
-    elif args.method == 'adda':
-        train_fn = train_adda.train_adda
-    elif args.method == 'dcc':
-        train_fn = train_dcc.train_dcc
     else:
         train_fn = train_cleit.train_cleit
-    # normalize_flag = args.method in ['adsn', 'mdsn', 'ndsn']
-    # normalize_flag = False
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -165,7 +150,7 @@ def main(args, update_params_dict):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('CLEIT training and evaluation')
     parser.add_argument('--method', dest='method', nargs='?', default='cleit',
-                        choices=['cleit', 'cleitc', 'cleita', 'cleitm', 'dsn', 'dcc', 'dann', 'coral', 'adda'])
+                        choices=['cleit', 'cleitc', 'cleita', 'cleitm', 'dsn'])
     # parser.add_argument('--drug', dest='drug', nargs='?', default='gem', choices=['gem', 'fu', 'cis', 'tem'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='cpearsonr', choices=['cpearsonr', 'dpearsonr'])
     parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])

@@ -73,12 +73,13 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
 
 
 def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
-                      metric_name='dpearsonr',
+                      metric_name='cpearsonr',
                       normalize_flag=False, **kwargs):
 
     target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
                            output_dim=kwargs['output_dim'],
-                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+                           hidden_dims=kwargs['regressor_hidden_dims'],
+                           out_fn=torch.nn.Sigmoid).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder,
@@ -151,11 +152,12 @@ def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save
 
 
 def fine_tune_encoder_new(encoder, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
-                          metric_name='dpearsonr',
+                          metric_name='cpearsonr',
                           normalize_flag=False, **kwargs):
     target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
                            output_dim=kwargs['output_dim'],
-                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+                           hidden_dims=kwargs['regressor_hidden_dims'],
+                           out_fn=torch.nn.Sigmoid).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder,
