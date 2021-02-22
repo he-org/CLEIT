@@ -1,4 +1,3 @@
-import pandas as pd
 import torch
 import json
 import os
@@ -9,7 +8,6 @@ from collections import defaultdict
 import itertools
 
 from data import DataProvider
-import data_config
 import train_vae
 import fine_tuning
 
@@ -184,7 +182,7 @@ if __name__ == '__main__':
     params_grid = {
         #"pretrain_num_epochs": [0, 50, 100, 200, 300],
         #"train_num_epochs": [100, 300, 500, 1000, 2000, 3000, 5000],
-        "train_num_epochs": [1000, 2000, 3000, 5000],
+        "train_num_epochs": [100, 300, 500, 1000, 2000, 3000, 5000],
         "dop": [0.0, 0.1],
         "ftrain_num_epochs": [100, 200, 300, 500, 750, 1000]
     }
