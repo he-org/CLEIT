@@ -125,7 +125,8 @@ class DataProvider:
         )
         labeled_gex_dataloader = DataLoader(labeled_gex_dataset,
                                             batch_size=self.batch_size,
-                                            shuffle=True)
+                                            shuffle=True,
+                                            drop_last=True)
         return labeled_gex_dataloader
 
     def get_labeled_mut_dataloader(self):
@@ -149,7 +150,8 @@ class DataProvider:
         )
         labeled_mut_dataloader = DataLoader(labeled_mut_dataset,
                                             batch_size=self.batch_size,
-                                            shuffle=True)
+                                            shuffle=True,
+                                            drop_last=True)
         labeled_drug_mut_only_dataset = TensorDataset(
             torch.from_numpy(self.ccle_mut_dat.loc[mut_only_labeled_samples].values.astype('float32')),
             torch.from_numpy(mut_only_target_df.values.astype('float32'))
@@ -157,7 +159,8 @@ class DataProvider:
 
         labeled_drug_mut_only_dataloader = DataLoader(labeled_drug_mut_only_dataset,
                                                       batch_size=self.batch_size,
-                                                      shuffle=True)
+                                                      shuffle=True,
+                                                      drop_last=True)
 
         return labeled_mut_dataloader, labeled_drug_mut_only_dataloader
 
@@ -269,7 +272,7 @@ class DataProvider:
 
                 train_labeled_dataloader = DataLoader(train_labeled_dateset,
                                                       batch_size=self.batch_size,
-                                                      shuffle=True)
+                                                      shuffle=True,drop_last=True)
 
                 test_labeled_dataloader = DataLoader(test_labeled_dateset,
                                                      batch_size=self.batch_size,
