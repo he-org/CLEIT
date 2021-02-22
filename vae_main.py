@@ -70,9 +70,10 @@ def main(args, update_params_dict):
 
     training_params['unlabeled'].update(update_params_dict)
     #patching
-    training_params['labeled']['train_num_epochs'] = update_params_dict['ftrain_num_epochs']
+    if args.omics == 'mut':
+        training_params['labeled']['train_num_epochs'] = update_params_dict['ftrain_num_epochs']
+        f_epoch = update_params_dict.pop('ftrain_num_epochs')
 
-    f_epoch = update_params_dict.pop('ftrain_num_epochs')
     param_str = dict_to_str(update_params_dict)
 
     training_params.update(
@@ -82,8 +83,12 @@ def main(args, update_params_dict):
             'es_flag': False,
             'retrain_flag': args.retrain_flag
         })
-    task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, f'ftrain_num_epochs_{f_epoch}')
     safe_make_dir(training_params['model_save_folder'])
+    if args.omics == 'mut':
+        task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, 'labeled')
+    else:
+        task_save_folder = os.path.join('model_save', 'vae', args.omics, param_str, f'ftrain_num_epochs_{f_epoch}')
+
     safe_make_dir(task_save_folder)
 
     random.seed(2020)
@@ -143,7 +148,7 @@ def main(args, update_params_dict):
         for train_labeled_dataloader, val_labeled_dataloader, test_labeled_dataloader in labeled_dataloader_generator:
             ft_encoder = deepcopy(encoder)
 
-            target_regressor, ft_historys = fine_tuning.fine_tune_encoder_new(
+            target_regressor, ft_historys = fine_tuning.fine_tune_encoder(
                 encoder=ft_encoder,
                 train_dataloader=train_labeled_dataloader,
                 val_dataloader=val_labeled_dataloader,
@@ -185,6 +190,8 @@ if __name__ == '__main__':
         "dop": [0.0, 0.1],
         "ftrain_num_epochs": [100, 200, 300, 500, 750, 1000]
     }
+    if args.omics == 'mut':
+        params_grid.pop('ftrain_num_epochs')
 
     keys, values = zip(*params_grid.items())
     update_params_dict_list = [dict(zip(keys, v)) for v in itertools.product(*values)]
