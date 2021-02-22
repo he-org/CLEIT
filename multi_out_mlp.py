@@ -1,7 +1,6 @@
 from torch import nn
 from types_ import *
 from typing import List
-from mlp import MLP
 import copy
 import torch
 from gradient_reversal import RevGrad

@@ -95,6 +95,8 @@ def build_encoder(args):
         json.dump(ft_evaluation_metrics, f)
 
     torch.save(target_regressor.encoder.state_dict(), os.path.join('model_save', 'reference_encoder.pt'))
+def move_encoder(args):
+    parsed_ft_params = parsing_utils.parse_hyper_vae_ft_evaluation_result(metric_name=args.metric)
 
 
 if __name__ == '__main__':

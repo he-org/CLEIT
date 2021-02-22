@@ -112,9 +112,9 @@ def main(args, update_params_dict):
             pickle.dump(dict(history), f)
 
     ft_evaluation_metrics = defaultdict(list)
+    fold_count = 0
     if args.omics == 'gex':
         labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics='gex')
-        fold_count = 0
         for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
             ft_encoder = deepcopy(encoder)
             target_regressor, ft_historys = fine_tuning.fine_tune_encoder(
@@ -132,9 +132,7 @@ def main(args, update_params_dict):
             fold_count += 1
     else:
         labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics='mut')
-        fold_count = 0
         test_ft_evaluation_metrics = defaultdict(list)
-
         for train_labeled_dataloader, val_labeled_dataloader, test_labeled_dataloader in labeled_dataloader_generator:
             ft_encoder = deepcopy(encoder)
             target_regressor, ft_historys = fine_tuning.fine_tune_encoder(

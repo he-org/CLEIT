@@ -130,6 +130,10 @@ def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save
         if save_flag:
             torch.save(target_regressor.state_dict(),
                        os.path.join(task_save_folder, f'target_regressor_{seed}.pt'))
+
+            torch.save(target_regressor.encoder.state_dict(),
+                       os.path.join(task_save_folder, f'ft_encoder_{seed}.pt'))
+
         if stop_flag:
             try:
                 ind = encoder_module_indices.pop()
