@@ -4,6 +4,8 @@ from typing import List
 from mlp import MLP
 import copy
 import torch
+from gradient_reversal import RevGrad
+
 
 
 def clones(module, N):
@@ -14,7 +16,7 @@ def clones(module, N):
 class MoMLP(nn.Module):
 
     def __init__(self, input_dim: int, output_dim: int, num_shared_layers: int = 1, hidden_dims: List = None,
-                 dop: float = 0.1, act_fn=nn.ReLU, out_fn=None, **kwargs) -> None:
+                 dop: float = 0.1, act_fn=nn.ReLU, out_fn=None, gr_flag=False, **kwargs) -> None:
         super(MoMLP, self).__init__()
         self.output_dim = output_dim
         self.dop = dop
@@ -26,6 +28,8 @@ class MoMLP(nn.Module):
         ind_modules = []
 
         if num_shared_layers > 0:
+            if gr_flag:
+                shared_modules.append(RevGrad())
             shared_modules.append(
                 nn.Sequential(
                     nn.Linear(input_dim, hidden_dims[0], bias=True),
@@ -46,6 +50,8 @@ class MoMLP(nn.Module):
             self.shared_module = nn.Sequential(*shared_modules)
 
         else:
+            if gr_flag:
+                ind_modules.append(RevGrad())
             ind_modules.append(
                 nn.Sequential(
                     nn.Linear(input_dim, hidden_dims[0], bias=True),

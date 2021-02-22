@@ -121,7 +121,8 @@ def train_adda(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, me
 
     target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
                            output_dim=kwargs['output_dim'],
-                           hidden_dims=kwargs['regressor_hidden_dims']).to(kwargs['device'])
+                           hidden_dims=kwargs['regressor_hidden_dims'],
+                           out_fn=torch.nn.Sigmoid).to(kwargs['device'])
 
     target_regressor = EncoderDecoder(encoder=encoder,
                                       decoder=target_decoder).to(kwargs['device'])
