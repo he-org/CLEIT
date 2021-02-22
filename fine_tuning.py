@@ -8,7 +8,6 @@ from torch.nn import functional as F
 from loss_and_metrics import masked_mse, masked_simse
 import os
 import torch
-import gc
 
 
 def classification_train_step(model, batch, loss_fn, device, optimizer, history, scheduler=None, clip=None):
@@ -52,7 +51,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     #                     for i in range(y.shape[0])])
     #
     # loss = (mse_loss-penalty_term) / y.shape[0]
-    loss = masked_mse(preds=model(x), labels=y)
+    loss = masked_simse(preds=model(x), labels=y)
     optimizer.zero_grad()
     loss.backward()
     if clip is not None:
