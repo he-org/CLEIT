@@ -167,11 +167,8 @@ if __name__ == '__main__':
         # "pretrain_num_epochs": [0, 50, 100, 200, 300],
         "train_num_epochs": [100, 300, 500, 1000, 2000, 3000, 5000],
         "dop": [0.0, 0.1],
-        # "train_num_epochs": [100]
     }
 
-    # if args.method not in ['adsn', 'adae', 'dsnw']:
-    #     params_grid.pop('pretrain_num_epochs')
 
     keys, values = zip(*params_grid.items())
     update_params_dict_list = [dict(zip(keys, v)) for v in itertools.product(*values)]
