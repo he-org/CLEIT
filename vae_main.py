@@ -70,7 +70,7 @@ def main(args, update_params_dict):
 
     training_params['unlabeled'].update(update_params_dict)
     #patching
-    if args.omics == 'mut':
+    if args.omics == 'gex':
         training_params['labeled']['train_num_epochs'] = update_params_dict['ftrain_num_epochs']
         f_epoch = update_params_dict.pop('ftrain_num_epochs')
 
