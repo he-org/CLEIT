@@ -127,7 +127,7 @@ def main(args, update_params_dict):
                 task_save_folder=task_save_folder,
                 **wrap_training_params(training_params, type='labeled')
             )
-            for metric in ['dpearsonr', 'drmse', 'cpearsonr', 'crmse']:
+            for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
             fold_count += 1
     else:
@@ -145,7 +145,7 @@ def main(args, update_params_dict):
                 task_save_folder=task_save_folder,
                 **wrap_training_params(training_params, type='labeled')
             )
-            for metric in ['dpearsonr', 'drmse', 'cpearsonr', 'crmse']:
+            for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
                 test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
             fold_count += 1

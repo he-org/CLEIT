@@ -18,6 +18,29 @@ def parse_param_str(param_str):
     matches = pattern.findall(param_str)
     return {matches[0][i]: float(matches[0][i + 1]) for i in range(0, len(matches[0]), 2) if matches[0][i] != ''}
 
+def parse_hyper_vae_ft_evaluation_result(metric_name='cpearsonr'):
+    folder = 'model_save/vae/gex/'
+    evaluation_metrics = {}
+    evaluation_metrics_std = {}
+    file_pattern = '(pretrain|train)+.*(dop+).*(ft)+.*\.json'
+
+    for sub_folder in os.listdir(folder):
+        if re.match('(pretrain|train)+.*(dop+).*', sub_folder):
+            for file in os.listdir(os.path.join(folder, sub_folder)):
+                if re.match(file_pattern, file):
+                    with open(os.path.join(folder, file), 'r') as f:
+                        result_dict = json.load(f)
+                    metrics = result_dict[metric_name]
+                    if any(np.isnan(metrics)):
+                        pass
+                    else:
+                        evaluation_metrics[file] = np.mean(result_dict[metric_name])
+                        evaluation_metrics_std[file] = np.std(result_dict[metric_name])
+
+    print(evaluation_metrics)
+    # print(evaluation_metrics_std)
+    print(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std))
+    return parse_param_str(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std)[0])
 
 def parse_ft_param_str(param_str):
     ftrain_num_epochs = int(param_str[:param_str.find('_')])
@@ -28,29 +51,29 @@ def parse_ft_param_str(param_str):
             matches[0][i] != ''}, ftrain_num_epochs
 
 
-def parse_hyper_vae_ft_evaluation_result(metric_name='dpearsonr'):
-    folder = 'model_save/vae/gex/'
-    evaluation_metrics = {}
-    evaluation_metrics_std = {}
-    for sub_folder in os.listdir(folder):
-        if re.match('(pretrain|train)+.*(dop+).*', sub_folder):
-            for d in os.listdir(os.path.join(folder, sub_folder)):
-                if re.match('(ftrain)+', d):
-                    ft_train_epoch = d.split('_')[-1]
-                    for file in os.listdir(os.path.join(folder, sub_folder, d)):
-                        if file.endswith('json'):
-                            with open(os.path.join(folder, sub_folder, d, file), 'r') as f:
-                                result_dict = json.load(f)
-                            metrics = result_dict[metric_name]
-                            if any(np.isnan(metrics)):
-                                pass
-                            else:
-                                evaluation_metrics["_".join([ft_train_epoch, file])] = np.mean(metrics)
-                                evaluation_metrics_std["_".join([ft_train_epoch, file])] = np.std(metrics)
-    print(evaluation_metrics)
-    # print(evaluation_metrics_std)
-    print(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std))
-    return parse_ft_param_str(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std)[0])
+# def parse_hyper_vae_ft_evaluation_result(metric_name='dpearsonr'):
+#     folder = 'model_save/vae/gex/'
+#     evaluation_metrics = {}
+#     evaluation_metrics_std = {}
+#     for sub_folder in os.listdir(folder):
+#         if re.match('(pretrain|train)+.*(dop+).*', sub_folder):
+#             for d in os.listdir(os.path.join(folder, sub_folder)):
+#                 if re.match('(ftrain)+', d):
+#                     ft_train_epoch = d.split('_')[-1]
+#                     for file in os.listdir(os.path.join(folder, sub_folder, d)):
+#                         if file.endswith('json'):
+#                             with open(os.path.join(folder, sub_folder, d, file), 'r') as f:
+#                                 result_dict = json.load(f)
+#                             metrics = result_dict[metric_name]
+#                             if any(np.isnan(metrics)):
+#                                 pass
+#                             else:
+#                                 evaluation_metrics["_".join([ft_train_epoch, file])] = np.mean(metrics)
+#                                 evaluation_metrics_std["_".join([ft_train_epoch, file])] = np.std(metrics)
+#     print(evaluation_metrics)
+#     # print(evaluation_metrics_std)
+#     print(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std))
+#     return parse_ft_param_str(get_largest_kv(d=evaluation_metrics, std_dict=evaluation_metrics_std)[0])
 
 
 def parse_ft_evaluation_result(file_name, method, measurement='AUC', metric_name='cpearsonr'):
