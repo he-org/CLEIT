@@ -43,7 +43,7 @@ def coral_train_step(model, s_batch, t_batch, device, optimizer, alpha, history,
     return history
 
 
-def train_coral(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, metric_name, **kwargs):
+def train_coral(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, metric_name, seed, **kwargs):
     """
 
     :param s_dataloaders:
@@ -111,11 +111,24 @@ def train_coral(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, m
                                                 metric_name=metric_name,
                                                 tolerance_count=50)
         if save_flag:
-            torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], 'coral_regressor.pt'))
+            torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], f'coral_regressor_{seed}.pt'))
         if stop_flag:
             break
     target_regressor.load_state_dict(
-        torch.load(os.path.join(kwargs['model_save_folder'], 'coral_regressor.pt')))
+        torch.load(os.path.join(kwargs['model_save_folder'], f'coral_regressor_{seed}.pt')))
+
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=val_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     output_folder=kwargs['model_save_folder'])
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=test_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     output_folder=kwargs['model_save_folder'])
 
     return target_regressor, (
         train_history, s_target_regression_eval_train_history, t_target_regression_eval_train_history,

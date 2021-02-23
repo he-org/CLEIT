@@ -38,7 +38,7 @@ def dcc_train_step(model, s_batch, t_batch, device, optimizer, alpha, history, s
 
 
 
-def train_dcc(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, metric_name, **kwargs):
+def train_dcc(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, metric_name, seed, **kwargs):
     """
     :param s_dataloaders:
     :param t_dataloaders:
@@ -105,11 +105,24 @@ def train_dcc(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader, met
                                                 metric_name=metric_name,
                                                 tolerance_count=50)
         if save_flag:
-            torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], 'dcc_regressor.pt'))
+            torch.save(target_regressor.state_dict(), os.path.join(kwargs['model_save_folder'], f'dcc_regressor_{seed}.pt'))
         if stop_flag:
             break
     target_regressor.load_state_dict(
-        torch.load(os.path.join(kwargs['model_save_folder'], 'dcc_regressor.pt')))
+        torch.load(os.path.join(kwargs['model_save_folder'], f'dcc_regressor_{seed}.pt')))
+
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=val_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     output_folder=kwargs['model_save_folder'])
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=test_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     output_folder=kwargs['model_save_folder'])
     return target_regressor, (
         train_history, s_target_regression_eval_train_history, t_target_regression_eval_train_history,
         target_regression_eval_val_history, target_regression_eval_test_history)
