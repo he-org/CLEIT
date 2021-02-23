@@ -73,7 +73,7 @@ def evaluate_target_classification_epoch(classifier, dataloader, device, history
     return history
 
 
-def evaluate_target_regression_epoch(regressor, dataloader, device, history=None):
+def evaluate_target_regression_epoch(regressor, dataloader, device, history, output_folder=None, seed=None):
     y_truths = None
     y_preds = None
     regressor.eval()
@@ -88,9 +88,10 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history=None
             y_preds = np.vstack([y_preds,
                                  y_pred.cpu().detach().numpy()]) if y_preds is not None else y_pred.cpu().detach().numpy()
     assert (y_truths.shape == y_preds.shape)
-    if history is None:
+    if output_folder is not None:
         # output prediction
-        raise NotImplementedError
+        pd.DataFrame(y_truths).to_csv(f'{output_folder}/truths_{seed}.csv')
+        pd.DataFrame(y_preds).to_csv(f'{output_folder}/preds_{seed}.csv')
     else:
         history['dpearsonr'].append(np.mean(np.abs([pearsonr(y_truths[:, i][~ma.masked_invalid(y_truths[:, i]).mask],
                                                       y_preds[:, i][~ma.masked_invalid(y_truths[:, i]).mask])[0]

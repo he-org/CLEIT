@@ -110,6 +110,7 @@ def main(args):
                                                     val_dataloader=val_labeled_dataloader,
                                                     test_dataloader=test_labeled_dataloader,
                                                     metric_name=args.metric,
+                                                    seed = fold_count,
                                                     **wrap_training_params(training_params, type='labeled'))
 
         for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
