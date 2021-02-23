@@ -232,7 +232,7 @@ def n_time_cv_regress(train_data, output_file_name, n=5, model_fn=regress_with_e
         if test_data is None:
             train_y_truths, train_y_preds = multi_regress(train_data, f'{output_file_name}_{seed}',
                                                           model_fn=model_fn, test_data=test_data,
-                                                          random_state=random_state)
+                                                          random_state=seed)
         else:
             train_y_truths, train_y_preds, test_y_truths, test_y_preds = multi_regress(train_data,
                                                                                        f'{output_file_name}_{seed}',
