@@ -28,7 +28,7 @@ def parse_hyper_vae_ft_evaluation_result(metric_name='cpearsonr'):
         if re.match('(pretrain|train)+.*(dop+).*', sub_folder):
             for file in os.listdir(os.path.join(folder, sub_folder)):
                 if re.match(file_pattern, file):
-                    with open(os.path.join(folder, file), 'r') as f:
+                    with open(os.path.join(folder, sub_folder,file), 'r') as f:
                         result_dict = json.load(f)
                     metrics = result_dict[metric_name]
                     if any(np.isnan(metrics)):
