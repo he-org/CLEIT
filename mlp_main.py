@@ -87,6 +87,8 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
         if save_flag:
             torch.save(target_regressor.state_dict(),
                        os.path.join(kwargs['model_save_folder'], f'target_regressor_{seed}.pt'))
+            torch.save(target_regressor.encoder.state_dict(),
+                       os.path.join(kwargs['model_save_folder'], f'ft_encoder_{seed}.pt'))
         if stop_flag:
             break
 

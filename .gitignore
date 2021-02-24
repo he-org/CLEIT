@@ -26,3 +26,4 @@ model_save/*.pickle
 model_save/*.log
 *.log
 predictions/*
+plots/*
