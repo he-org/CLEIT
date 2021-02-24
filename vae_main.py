@@ -87,11 +87,6 @@ def main(args, update_params_dict):
     data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'],
                                  target=args.measurement)
 
-    if "vae.pt" in os.listdir(training_params['model_save_folder']):
-        training_params.update(
-            {'retrain_flag': False}
-        )
-
     training_params.update(
         {
             'input_dim': data_provider.shape_dict[args.omics],
