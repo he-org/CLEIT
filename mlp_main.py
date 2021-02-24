@@ -93,12 +93,13 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
     target_regressor.load_state_dict(
         torch.load(os.path.join(kwargs['model_save_folder'], f'target_regressor_{seed}.pt')))
 
-    # evaluate_target_regression_epoch(regressor=target_regressor,
-    #                                  dataloader=val_dataloader,
-    #                                  device=kwargs['device'],
-    #                                  history=None,
-    #                                  seed=seed,
-    #                                  output_folder=kwargs['model_save_folder'])
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=val_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     cv_flag=True,
+                                     output_folder=kwargs['model_save_folder'])
     if test_dataloader is not None:
         evaluate_target_regression_epoch(regressor=target_regressor,
                                          dataloader=test_dataloader,
