@@ -98,6 +98,7 @@ def build_encoder(args):
     torch.save(target_regressor.encoder.state_dict(), os.path.join('model_save', 'reference_encoder.pt'))
 def move_encoder(args):
     parsed_ft_params = parsing_utils.parse_hyper_vae_ft_evaluation_result(metric_name=args.metric)
+    parsed_ft_params['train_num_epochs'] = int(parsed_ft_params['train_num_epochs'])
     param_str = dict_to_str(parsed_ft_params)
 
     for file in os.listdir(f'./model_save/vae/gex/{param_str}'):
