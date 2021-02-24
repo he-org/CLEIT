@@ -78,6 +78,8 @@ class VAE(BaseAE):
             nn.Dropout(self.dop),
             nn.Linear(hidden_dims[-1], input_dim)
         )
+        hidden_dims.reverse()
+
 
     def encode(self, input: Tensor) -> Tensor:
         if self.noise_flag and self.training:
