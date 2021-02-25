@@ -88,11 +88,11 @@ def main(args, update_params_dict):
     training_params.update(
         {
             'device': device,
-            'model_save_folder': os.path.join('model_save', args.method, param_str),
+            'model_save_folder': os.path.join('model_save', args.method+'1', param_str),
             'es_flag': False,
             'retrain_flag': args.retrain_flag
         })
-    task_save_folder = os.path.join('model_save', args.method, args.measurement)
+    task_save_folder = os.path.join('model_save', args.method+'1', args.measurement)
 
     safe_make_dir(training_params['model_save_folder'])
     safe_make_dir(task_save_folder)
@@ -133,6 +133,10 @@ def main(args, update_params_dict):
                 task_save_folder=task_save_folder,
                 **wrap_training_params(training_params, type='labeled')
             )
+            with open(os.path.join(training_params['model_save_folder'], f'ft_train_history_{fold_count}.pickle'),
+                      'wb') as f:
+                for history in ft_historys:
+                    pickle.dump(dict(history), f)
             for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
                 test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
@@ -157,6 +161,10 @@ def main(args, update_params_dict):
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
                 test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
             fold_count += 1
+            with open(os.path.join(training_params['model_save_folder'], f'ft_train_history_{fold_count}.pickle'),
+                      'wb') as f:
+                for history in ft_historys:
+                    pickle.dump(dict(history), f)
         with open(os.path.join(task_save_folder, f'{param_str}_test_ft_evaluation_results.json'), 'w') as f:
                 json.dump(test_ft_evaluation_metrics, f)
         with open(os.path.join(task_save_folder, f'{param_str}_ft_evaluation_results.json'), 'w') as f:
