@@ -178,6 +178,8 @@ def fine_tune_encoder_new(encoder, train_dataloader, val_dataloader, seed, task_
                                       decoder=target_decoder,
                                       normalize_flag=normalize_flag).to(kwargs['device'])
 
+    target_regressor.load_state_dict(torch.load(os.path.join('./model_save', f'target_regressor_{seed}.pt')))
+
     target_regression_train_history = defaultdict(list)
     target_regression_eval_train_history = defaultdict(list)
     target_regression_eval_val_history = defaultdict(list)
