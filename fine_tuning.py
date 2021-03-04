@@ -98,6 +98,21 @@ def fine_tune_encoder(encoder, train_dataloader, val_dataloader, seed, task_save
     target_regression_optimizer = torch.optim.AdamW(chain(*target_regression_params),
                                                     lr=lr)
 
+    target_regression_eval_train_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                            dataloader=train_dataloader,
+                                                                            device=kwargs['device'],
+                                                                            history=target_regression_eval_train_history)
+    target_regression_eval_val_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                          dataloader=val_dataloader,
+                                                                          device=kwargs['device'],
+                                                                          history=target_regression_eval_val_history)
+
+    if test_dataloader is not None:
+        target_regression_eval_test_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                               dataloader=test_dataloader,
+                                                                               device=kwargs['device'],
+                                                                               history=target_regression_eval_test_history)
+
     for epoch in range(kwargs['train_num_epochs']):
         if epoch % 50 == 0:
             print(f'Fine tuning epoch {epoch}')
