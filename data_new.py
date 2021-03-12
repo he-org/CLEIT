@@ -83,6 +83,7 @@ class DataProvider:
         self.tcga_prot_dat = None
         self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
         self.prot_dat.dropna(axis=1, inplace=True)
+        self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
         if self.filter is not None:
             if self.filter == 'align':
                 self.prot_dat = align_feature(ref_df=self.trans_dat, dest_df=self.prot_dat)
