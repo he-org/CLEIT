@@ -35,6 +35,13 @@ def filter_with_MAD(df, k=5000):
     result = df[(df - df.median()).abs().median().nlargest(k).index.tolist()]
     return result
 
+def filter_with_uqstd(df, k=1000):
+    uq_perc = df.apply(lambda col: len(col.unique()))/df.shape[0]
+    stds = df.std()
+    features = (uq_perc*stds).nlargest(k).index.tolist()
+    result = df[features]
+    return result
+
 
 def align_feature(ref_df, dest_df):
     matched_features = list(set(ref_df.columns.tolist()) & set(dest_df.columns.tolist()))
@@ -92,7 +99,9 @@ class DataProvider:
                 # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
                 self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
             elif self.filter == 'uq':
-                raise NotImplementedError
+                self.ccle_prot_dat = filter_with_uqstd(df=self.ccle_prot_dat, k=1000)
+                # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
+                self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
             else:
                 pass
 
@@ -334,10 +343,4 @@ class DataProvider:
         labeled_target_df = self.target_df.loc[labeled_samples]
         labeled_samples = labeled_samples[labeled_target_df.shape[1] - labeled_target_df.isna().sum(axis=1) >= 2]
 
-        prot_only_labeled_samples = self.prot_dat.index.intersection(self.target_df.index)
-        prot_only_labeled_samples = prot_only_labeled_samples.difference(labeled_samples)
-        prot_only_labeled_target_df = self.target_df.loc[prot_only_labeled_samples]
-        prot_only_labeled_samples = prot_only_labeled_samples[
-            prot_only_labeled_target_df.shape[1] - prot_only_labeled_target_df.isna().sum(axis=1) >= 2]
-
-        return labeled_samples, prot_only_labeled_samples
+        return labeled_samples
