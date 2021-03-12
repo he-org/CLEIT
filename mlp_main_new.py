@@ -83,7 +83,7 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
                                                                                    history=target_regression_eval_test_history)
         save_flag, stop_flag = model_save_check(history=target_regression_eval_val_history,
                                                 metric_name=metric_name,
-                                                tolerance_count=100)
+                                                tolerance_count=50)
         if save_flag:
             torch.save(target_regressor.state_dict(),
                        os.path.join(kwargs['model_save_folder'], f'target_regressor_{seed}.pt'))
@@ -142,7 +142,7 @@ def main(args):
             'device': device,
             'model_save_folder': os.path.join('model_save', 'mlp_new', f'{args.omics}_{args.filter}')
         })
-
+    safe_make_dir(training_params['model_save_folder'])
     data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'], filter=args.filter)
 
     training_params.update(
