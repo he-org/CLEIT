@@ -5,7 +5,7 @@ from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 from loss_and_metrics import masked_mse, masked_simse
 from ae import AE
-from data import DataProvider
+from data_new import DataProvider
 import torch
 import json
 import os
@@ -110,7 +110,6 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
                                          seed=seed,
                                          output_folder=kwargs['model_save_folder'])
 
-
     return target_regressor, (target_regression_train_history, target_regression_eval_train_history,
                               target_regression_eval_val_history, target_regression_eval_test_history)
 
@@ -144,8 +143,7 @@ def main(args):
             'model_save_folder': os.path.join('model_save', 'mlp_new', f'{args.omics}_{args.filter}')
         })
 
-    data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'],
-                                 target=args.measurement)
+    data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'], filter=args.filter)
 
     training_params.update(
         {
@@ -167,7 +165,7 @@ def main(args):
                 metric_name=args.metric,
                 **wrap_training_params(training_params, type='labeled')
             )
-            for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
+            for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
             fold_count += 1
     else:
@@ -184,7 +182,7 @@ def main(args):
                 metric_name=args.metric,
                 **wrap_training_params(training_params, type='labeled')
             )
-            for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
+            for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
                 test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
             fold_count += 1
@@ -201,7 +199,7 @@ if __name__ == '__main__':
     parser.add_argument('--filter', dest='filter', nargs='?', default=None,
                         choices=['align', 'mad', 'uq'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='cpearsonr', choices=['cpearsonr', 'dpearsonr'])
-    #parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
+    # parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
     parser.add_argument('--n', dest='n', nargs='?', type=int, default=5)
 
     train_group = parser.add_mutually_exclusive_group(required=False)
