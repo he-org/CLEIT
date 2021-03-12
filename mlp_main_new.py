@@ -153,41 +153,21 @@ def main(args):
     )
 
     ft_evaluation_metrics = defaultdict(list)
-    if args.omics == 'gex':
-        labeled_dataloader_generator = data_provider.get_drug_labeled_gex_dataloader()
-        fold_count = 0
-        for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
-            target_regressor, ft_historys = fine_tune_encoder(
-                train_dataloader=train_labeled_dataloader,
-                val_dataloader=val_labeled_dataloader,
-                test_dataloader=val_labeled_dataloader,
-                seed=fold_count,
-                metric_name=args.metric,
-                **wrap_training_params(training_params, type='labeled')
-            )
-            for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
-                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
-            fold_count += 1
-    else:
-        labeled_dataloader_generator = data_provider.get_drug_labeled_mut_dataloader()
-        fold_count = 0
-        test_ft_evaluation_metrics = defaultdict(list)
+    labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics=args.omics)
+    fold_count = 0
+    for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
+        target_regressor, ft_historys = fine_tune_encoder(
+            train_dataloader=train_labeled_dataloader,
+            val_dataloader=val_labeled_dataloader,
+            test_dataloader=val_labeled_dataloader,
+            seed=fold_count,
+            metric_name=args.metric,
+            **wrap_training_params(training_params, type='labeled')
+        )
+        for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
+            ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
+        fold_count += 1
 
-        for train_labeled_dataloader, val_labeled_dataloader, test_labeled_dataloader in labeled_dataloader_generator:
-            target_regressor, ft_historys = fine_tune_encoder(
-                train_dataloader=train_labeled_dataloader,
-                val_dataloader=val_labeled_dataloader,
-                test_dataloader=test_labeled_dataloader,
-                seed=fold_count,
-                metric_name=args.metric,
-                **wrap_training_params(training_params, type='labeled')
-            )
-            for metric in ['dpearsonr', 'dspearmanr', 'drmse', 'cpearsonr', 'cspearmanr', 'crmse']:
-                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
-                test_ft_evaluation_metrics[metric].append(ft_historys[-1][metric][ft_historys[-2]['best_index']])
-            fold_count += 1
-        with open(os.path.join(training_params['model_save_folder'], f'test_ft_evaluation_results.json'), 'w') as f:
-            json.dump(test_ft_evaluation_metrics, f)
     with open(os.path.join(training_params['model_save_folder'], f'ft_evaluation_results.json'), 'w') as f:
         json.dump(ft_evaluation_metrics, f)
 
