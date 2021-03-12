@@ -116,7 +116,7 @@ class DataProvider:
 
     def get_labeled_data_generator(self, omics='prot'):
         labeled_samples = self.trans_dat.index.intersection(self.target_df.index)
-        labeled_samples = self.prot_data.index.intersection(labeled_samples)
+        labeled_samples = self.prot_dat.index.intersection(labeled_samples)
         labeled_target_df = self.target_df.loc[labeled_samples]
         labeled_samples = labeled_samples[labeled_target_df.shape[1] - labeled_target_df.isna().sum(axis=1) >= 2]
         labeled_target_df = self.target_df.loc[labeled_samples]
@@ -151,10 +151,10 @@ class DataProvider:
 
                 yield train_labeled_dataloader, test_labeled_dataloader
         else:
-            for train_index, test_index in s_kfold.split(self.prot_data.loc[labeled_samples].values,
+            for train_index, test_index in s_kfold.split(self.prot_dat.loc[labeled_samples].values,
                                                          sample_label_vec):
-                train_labeled_df, test_labeled_df = self.prot_data.loc[labeled_samples].values[train_index], \
-                                                    self.prot_data.loc[labeled_samples].values[test_index]
+                train_labeled_df, test_labeled_df = self.prot_dat.loc[labeled_samples].values[train_index], \
+                                                    self.prot_dat.loc[labeled_samples].values[test_index]
                 train_labels, test_labels = labeled_target_df.values[train_index].astype('float32'), \
                                             labeled_target_df.values[
                                                 test_index].astype('float32')
