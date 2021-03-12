@@ -35,10 +35,11 @@ def filter_with_MAD(df, k=5000):
     result = df[(df - df.median()).abs().median().nlargest(k).index.tolist()]
     return result
 
+
 def filter_with_uqstd(df, k=1000):
-    uq_perc = df.apply(lambda col: len(col.unique()))/df.shape[0]
+    uq_perc = df.apply(lambda col: len(col.unique())) / df.shape[0]
     stds = df.std()
-    features = (uq_perc*stds).nlargest(k).index.tolist()
+    features = (uq_perc * stds).nlargest(k).index.tolist()
     result = df[features]
     return result
 
@@ -68,7 +69,7 @@ def get_rng(obj=None):
 
 
 class DataProvider:
-    def __init__(self, filter = None, batch_size=64, target='AUC', random_seed=2021):
+    def __init__(self, filter=None, batch_size=64, target='AUC', random_seed=2021):
         self.seed = random_seed
         self.target = target
         self.batch_size = batch_size
@@ -98,10 +99,14 @@ class DataProvider:
                 self.ccle_prot_dat = filter_with_MAD(df=self.ccle_prot_dat, k=1000)
                 # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
                 self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+                self.prot_dat.dropna(axis=1, inplace=True)
+                self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
             elif self.filter == 'uq':
                 self.ccle_prot_dat = filter_with_uqstd(df=self.ccle_prot_dat, k=1000)
                 # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
                 self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+                self.prot_dat.dropna(axis=1, inplace=True)
+                self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
             else:
                 pass
 
