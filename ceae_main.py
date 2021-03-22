@@ -51,7 +51,7 @@ def dict_to_str(d):
 
 
 def main(train_num_epochs=10000):
-    train_fn = train_ceae.train_ceae()
+    train_fn = train_ceae.train_ceae
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     training_params = {
         'device': device,
