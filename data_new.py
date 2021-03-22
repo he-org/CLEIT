@@ -82,33 +82,32 @@ class DataProvider:
                            'target': self.target_df.shape[-1]}
 
     def _load_trans_data(self):
-        self.ccle_trans_dat = pd.read_csv('./data/ccle_pro_trans_pic50/ccle_trans_1305_978.csv', index_col=0)
-        self.tcga_trans_dat = None
-        self.trans_dat = self.ccle_trans_dat.append(self.tcga_trans_dat)
+        self.trans_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_ccle_tcga_ad_tpm_log2.csv', index_col=0)
+        self.trans_repr_dat = pd.read_csv('./data/ccle_pro_trans_pic50/hidden_repr_cells_v7.csv', index_col=0)
 
     def _load_prot_data(self):
-        self.ccle_prot_dat = pd.read_csv('./data/ccle_pro_trans_pic50/ccle_proteomics_369_5989.csv', index_col=0)
-        self.tcga_prot_dat = None
-        self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+        self.prot_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_rppa_proteomics_ccle_tcga.csv', index_col=0)
         self.prot_dat.dropna(axis=1, inplace=True)
-        self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
-        if self.filter is not None:
-            if self.filter == 'align':
-                self.prot_dat = align_feature(ref_df=self.trans_dat, dest_df=self.prot_dat)
-            elif self.filter == 'mad':
-                self.ccle_prot_dat = filter_with_MAD(df=self.ccle_prot_dat, k=1000)
-                # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
-                self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
-                self.prot_dat.dropna(axis=1, inplace=True)
-                self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
-            elif self.filter == 'uq':
-                self.ccle_prot_dat = filter_with_uqstd(df=self.ccle_prot_dat, k=1000)
-                # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
-                self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
-                self.prot_dat.dropna(axis=1, inplace=True)
-                self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
-            else:
-                pass
+        # self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+        # self.prot_dat.dropna(axis=1, inplace=True)
+        # self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
+        # if self.filter is not None:
+        #     if self.filter == 'align':
+        #         self.prot_dat = align_feature(ref_df=self.trans_dat, dest_df=self.prot_dat)
+        #     elif self.filter == 'mad':
+        #         self.ccle_prot_dat = filter_with_MAD(df=self.ccle_prot_dat, k=1000)
+        #         # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
+        #         self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+        #         self.prot_dat.dropna(axis=1, inplace=True)
+        #         self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
+        #     elif self.filter == 'uq':
+        #         self.ccle_prot_dat = filter_with_uqstd(df=self.ccle_prot_dat, k=1000)
+        #         # self.tcga_prot_dat = filter_with_MAD(df=self.tcga_prot_dat, k=1000)
+        #         self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
+        #         self.prot_dat.dropna(axis=1, inplace=True)
+        #         self.prot_dat = self.prot_dat.reset_index().groupby('index').mean()
+        #     else:
+        #         pass
 
     def _load_target_data(self):
 
@@ -128,6 +127,18 @@ class DataProvider:
     #                                           shuffle=True)
     #
     #     return unlabeled_trans_dataloader
+
+    def get_unlabeld_dataloader(self):
+        matched_samples = self.trans_repr_dat.index.intersection(self.prot_dat.index)
+        matched_dataset = TensorDataset(
+            torch.from_numpy(self.prot_dat.loc[matched_samples].values.astype('float32')),
+            torch.from_numpy(self.trans_repr_dat.loc[matched_samples].values.astype('float32'))
+        )
+        unlabeled_dataloader = DataLoader(matched_dataset,
+                                          batch_size=self.batch_size,
+                                          shuffle=True
+                                          )
+        return unlabeled_dataloader
 
     def get_labeled_data_generator(self, omics='prot'):
         labeled_samples = self.trans_dat.index.intersection(self.target_df.index)
@@ -319,28 +330,6 @@ class DataProvider:
 
             yield train_labeled_dataloader, test_labeled_dataloader
 
-    def get_unlabeld_prot_dataloader(self, match=True):
-        if match:
-            prot_trans_samples = self.trans_dat.index.intersection(self.prot_dat.index)
-            prot_trans_dataset = TensorDataset(
-                torch.from_numpy(self.prot_dat.loc[prot_trans_samples].values.astype('float32')),
-                torch.from_numpy(self.trans_dat.loc[prot_trans_samples].values.astype('float32'))
-            )
-            unlabeled_prot_trans_dataloader = DataLoader(prot_trans_dataset,
-                                                         batch_size=self.batch_size,
-                                                         shuffle=True,
-                                                         drop_last=True
-                                                         )
-            return unlabeled_prot_trans_dataloader
-
-        else:
-            prot_dataset = TensorDataset(torch.from_numpy(self.prot_dat.values.astype('float32')))
-            unlabeled_prot_dataloader = DataLoader(prot_dataset,
-                                                   batch_size=self.batch_size,
-                                                   shuffle=True,
-                                                   drop_last=True)
-
-            return unlabeled_prot_dataloader
 
     def get_labeled_samples(self):
         labeled_samples = self.trans_dat.index.intersection(self.target_df.index)
