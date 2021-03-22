@@ -63,7 +63,7 @@ def train_ceae(dataloader, **kwargs):
     ceae_optimizer = torch.optim.AdamW(chain(*ceae_params), lr=kwargs['lr'])
     # start autoencoder pretraining
     for epoch in range(int(kwargs['train_num_epochs'])):
-        if epoch % 50 == 0 and epoch > 0:
+        if epoch % 50 == 0:
             print(f'----CE Autoencoder Training Epoch {epoch} ----')
         for step, batch in enumerate(dataloader):
             ae_eval_train_history = ceae_train_step(ae=autoencoder,
@@ -80,6 +80,6 @@ def train_ceae(dataloader, **kwargs):
                                  decoder=transmitter).to(kwargs['device'])
 
         torch.save(encoder.state_dict(),
-                   os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}', 'encoder.pt'))
+                   os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
 
     return encoder, (ae_eval_train_history, ae_eval_test_history)
