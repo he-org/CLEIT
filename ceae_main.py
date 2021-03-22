@@ -85,5 +85,5 @@ def main(train_num_epochs=10000):
 
 
 if __name__ == '__main__':
-    train_num_epochs = 10
+    train_num_epochs = 10000
     main(train_num_epochs=train_num_epochs)
