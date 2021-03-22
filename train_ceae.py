@@ -63,8 +63,6 @@ def train_ceae(dataloader, **kwargs):
     ceae_optimizer = torch.optim.AdamW(chain(*ceae_params), lr=kwargs['lr'])
     # start autoencoder pretraining
     for epoch in range(int(kwargs['train_num_epochs'])):
-        if epoch % 50 == 0:
-            print(f'----CE Autoencoder Training Epoch {epoch} ----')
         for step, batch in enumerate(dataloader):
             ae_eval_train_history = ceae_train_step(ae=autoencoder,
                                                     transmitter=transmitter,
@@ -72,14 +70,16 @@ def train_ceae(dataloader, **kwargs):
                                                     device=kwargs['device'],
                                                     optimizer=ceae_optimizer,
                                                     history=ae_eval_train_history)
-        torch.save(autoencoder.encoder.state_dict(),
-                   os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
-        torch.save(transmitter.state_dict(),
-                   os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_transmitter.pt'))
+        if epoch % 50 == 0:
+            print(f'----CE Autoencoder Training Epoch {epoch} ----')
+            torch.save(autoencoder.encoder.state_dict(),
+                       os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
+            torch.save(transmitter.state_dict(),
+                       os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_transmitter.pt'))
     encoder = EncoderDecoder(encoder=autoencoder.encoder,
-                                 decoder=transmitter).to(kwargs['device'])
-        #
-        # torch.save(encoder.state_dict(),
-        #            os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
+                             decoder=transmitter).to(kwargs['device'])
+    #
+    # torch.save(encoder.state_dict(),
+    #            os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
 
     return encoder, (ae_eval_train_history, ae_eval_test_history)
