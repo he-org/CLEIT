@@ -74,8 +74,8 @@ def main(train_num_epochs=10000):
     set_random_seed(2021)
     # start unlabeled training
     _, historys = train_fn(
-        data_provider.get_unlabeld_dataloader(),
-        training_params
+        training_params,
+        dataloder=data_provider.get_unlabeld_dataloader()
     )
 
     with open(os.path.join(training_params['model_save_folder'], f'pre_train_history.pickle'), 'wb') as f:
