@@ -72,14 +72,14 @@ def train_ceae(dataloader, **kwargs):
                                                     device=kwargs['device'],
                                                     optimizer=ceae_optimizer,
                                                     history=ae_eval_train_history)
-        # torch.save(autoencoder.state_dict(),
-        #            os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}', 'ceae.pt'))
-        # torch.save(transmitter.state_dict(),
-        #            os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}', 'transmitter.pt'))
-        encoder = EncoderDecoder(encoder=autoencoder.encoder,
-                                 decoder=transmitter).to(kwargs['device'])
-
-        torch.save(encoder.state_dict(),
+        torch.save(autoencoder.encoder.state_dict(),
                    os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
+        torch.save(transmitter.encoder.state_dict(),
+                   os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_transmitter.pt'))
+    encoder = EncoderDecoder(encoder=autoencoder.encoder,
+                                 decoder=transmitter).to(kwargs['device'])
+        #
+        # torch.save(encoder.state_dict(),
+        #            os.path.join(kwargs['model_save_folder'], f'train_epoch_{epoch}_encoder.pt'))
 
     return encoder, (ae_eval_train_history, ae_eval_test_history)
