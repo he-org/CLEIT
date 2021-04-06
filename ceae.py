@@ -5,7 +5,7 @@ from torch.nn import functional as F
 from base_ae import BaseAE
 from types_ import *
 from typing import List
-
+from mlp import MLP
 
 class PositionalEncoding(nn.Module):
 
@@ -56,7 +56,7 @@ class GaussianNoise(nn.Module):
 
 class EncoderComponent(nn.Module):
 
-    def __init__(self, cell_id_input_dim, num_gene=1):
+    def __init__(self, cell_id_input_dim, num_gene=978):
 
         super(EncoderComponent, self).__init__()
         # self.cell_id_2 = nn.Linear(100, cell_id_emb_dim)
@@ -74,7 +74,7 @@ class EncoderComponent(nn.Module):
                                                   num_encoder_layers=1, num_decoder_layers=1,
                                                   dim_feedforward=self.trans_cell_embed_dim * 4)
 
-        self.expand_to_num_gene = nn.Linear(50, 978)
+        self.expand_to_num_gene = nn.Linear(50, num_gene)
         self.pos_encoder = PositionalEncoding(self.trans_cell_embed_dim)
         self.num_gene = num_gene
 
@@ -93,13 +93,18 @@ class EncoderComponent(nn.Module):
             cell_hidden_ = cell_id_embed.contiguous().view(cell_id_embed.size(0), -1)
             cell_id_embed = cell_id_embed.repeat(1, self.num_gene, 1)
         else:
-            cell_id_embed = self.cell_id_embed(cell_feature)  # Transformer
+            cell_id_embed = self.cell_id_embed(cell_feature) # Transformer
             cell_id_embed = cell_id_embed.unsqueeze(-1)  # Transformer
-            cell_id_embed = cell_id_embed.repeat(1, 1, self.trans_cell_embed_dim)
+            cell_id_embed = cell_id_embed.repeat(1,1,self.trans_cell_embed_dim)
             cell_id_embed = self.pos_encoder(cell_id_embed)
-            cell_id_embed = self.cell_id_transformer(cell_id_embed, cell_id_embed)  # Transformer
+            cell_id_embed = self.cell_id_transformer(cell_id_embed, cell_id_embed) # Transformer
+            # cell_id_embed = [batch * 50 * 32(trans_cell_embed_dim)]
             cell_hidden_, _ = torch.max(cell_id_embed, -1)
+            # cell_hidden_ = [batch * 50]
             cell_id_embed = cell_hidden_.unsqueeze(1).repeat(1, self.num_gene, 1)
+            # cell_hidden_ = cell_id_embed.contigous().view(cell_id_embed.size(0), -1) ## just to return the hidden representation
+            # cell_id_embed = self.expand_to_num_gene(cell_id_embed.transpose(-1,-2)).transpose(-1,-2) # Transformer
+            # cell_id_embed = [batch * num_gene * 50]
         return cell_id_embed, cell_hidden_
 
 
