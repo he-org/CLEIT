@@ -83,10 +83,10 @@ class DataProvider:
 
     def _load_trans_data(self):
         self.trans_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_ccle_tcga_ad_tpm_log2.csv', index_col=0)
-        self.trans_repr_dat = pd.read_csv('./data/ccle_pro_trans_pic50/hidden_repr_cells_v7.csv', index_col=0)
+        self.trans_repr_dat = pd.read_csv('./data/ccle_pro_trans_pic50/hidden_repr_cells_v7_0325.csv', index_col=0)
 
     def _load_prot_data(self):
-        self.prot_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_rppa_proteomics_ccle_tcga.csv', index_col=0)
+        self.prot_dat = pd.read_csv('./data/ccle_pro_trans_pic50/tri_basal_proteomics.csv', index_col=0)
         self.prot_dat.dropna(axis=1, inplace=True)
         # self.prot_dat = self.ccle_prot_dat.append(self.tcga_prot_dat)
         # self.prot_dat.dropna(axis=1, inplace=True)
