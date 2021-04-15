@@ -20,9 +20,9 @@ def ceae_train_step(ae, transmitter, batch, device, optimizer, history, schedule
     optimizer.zero_grad()
 
     x_t_code = x_t#
-    x_p_code = transmitter(ae.encode(x_p))
+    x_p_code = ae.encode(x_p)
 
-    code_loss = contrastive_loss(y_true=x_t_code, y_pred=x_p_code, device=device)
+    code_loss = contrastive_loss(y_true=x_t_code, y_pred=transmitter(x_p_code), device=device)
     # loss = loss_dict['loss']
     # loss = loss_dict['loss'] + code_loss
     optimizer.zero_grad()
