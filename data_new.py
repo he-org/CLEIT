@@ -82,7 +82,7 @@ class DataProvider:
                            'target': self.target_df.shape[-1]}
 
     def _load_trans_data(self):
-        self.trans_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_ccle_tcga_ad_tpm_log2.csv', index_col=0)
+        self.trans_dat = pd.read_csv('./data/ccle_pro_trans_pic50/adjusted_ccle_tcga_tpm_log2.csv', index_col=0)
         self.trans_repr_dat = pd.read_csv('./data/ccle_pro_trans_pic50/hidden_repr_cells_v7_0325.csv', index_col=0)
 
     def _load_prot_data(self):
