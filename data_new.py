@@ -129,6 +129,19 @@ class DataProvider:
     #     return unlabeled_trans_dataloader
 
     def get_unlabeld_dataloader(self):
+        matched_samples = self.trans_dat.index.intersection(self.prot_dat.index)
+        matched_dataset = TensorDataset(
+            torch.from_numpy(self.prot_dat.loc[matched_samples].values.astype('float32')),
+            torch.from_numpy(self.trans_dat.loc[matched_samples].values.astype('float32'))
+        )
+        unlabeled_dataloader = DataLoader(matched_dataset,
+                                          batch_size=self.batch_size,
+                                          shuffle=True
+                                          )
+        return unlabeled_dataloader
+
+
+    def get_unlabeld_repr_dataloader(self):
         matched_samples = self.trans_repr_dat.index.intersection(self.prot_dat.index)
         matched_dataset = TensorDataset(
             torch.from_numpy(self.prot_dat.loc[matched_samples].values.astype('float32')),
@@ -139,6 +152,7 @@ class DataProvider:
                                           shuffle=True
                                           )
         return unlabeled_dataloader
+
 
     def get_labeled_data_generator(self, omics='prot'):
         labeled_samples = self.trans_dat.index.intersection(self.target_df.index)

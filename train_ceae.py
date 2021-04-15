@@ -24,10 +24,11 @@ def ceae_train_step(ae, transmitter, batch, device, optimizer, history, schedule
 
     code_loss = contrastive_loss(y_true=x_t_code, y_pred=transmitter(x_p_code), device=device)
     # loss = loss_dict['loss']
-    # loss = loss_dict['loss'] + code_loss
+    loss = loss_dict['loss'] + code_loss
+    # loss = code_loss
     optimizer.zero_grad()
 
-    code_loss.backward()
+    loss.backward()
     optimizer.step()
     if scheduler is not None:
         scheduler.step()

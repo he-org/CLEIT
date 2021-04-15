@@ -75,7 +75,7 @@ def main(train_num_epochs=10000):
     set_random_seed(2021)
     # start unlabeled training
     _, historys = train_fn(
-        dataloader=data_provider.get_unlabeld_dataloader(),
+        dataloader=data_provider.get_unlabeld_repr_dataloader(),
         **training_params
     )
 
