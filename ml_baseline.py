@@ -302,6 +302,8 @@ if __name__ == '__main__':
 
     train_gex_data = (label_gex_df, labeled_target_df)
     train_mut_data = (label_mut_df, labeled_target_df)
+    train_both_data = (pd.concat((label_gex_df, label_mut_df), axis=1), labeled_target_df)
+
     test_data = (label_mut_only_df, labeled_mut_only_target_df)
 
     gex_train_history, _ = n_time_cv_regress(train_gex_data, 'gex_pred', n=5, model_fn=regress_with_enet,
@@ -318,3 +320,12 @@ if __name__ == '__main__':
 
     with open('./predictions/test_mut_pred.json', 'w') as f:
         json.dump(mut_test_history, f)
+
+    both_train_history, _ = n_time_cv_regress(train_both_data, 'both_pred', n=5, model_fn=regress_with_enet,
+                                             test_data=None, random_state=2020)
+
+    with open('./predictions/both_pred.json', 'w') as f:
+        json.dump(gex_train_history, f)
+
+
+
