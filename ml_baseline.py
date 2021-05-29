@@ -306,20 +306,20 @@ if __name__ == '__main__':
 
     test_data = (label_mut_only_df, labeled_mut_only_target_df)
 
-    gex_train_history, _ = n_time_cv_regress(train_gex_data, 'gex_pred', n=5, model_fn=regress_with_enet,
-                                             test_data=None, random_state=2020)
-
-    with open('./predictions/gex_pred.json', 'w') as f:
-        json.dump(gex_train_history, f)
-
-    mut_train_history, mut_test_history = n_time_cv_regress(train_mut_data, 'mut_pred', n=5, model_fn=regress_with_enet,
-                                                            test_data=test_data, random_state=2020)
-
-    with open('./predictions/mut_pred.json', 'w') as f:
-        json.dump(mut_train_history, f)
-
-    with open('./predictions/test_mut_pred.json', 'w') as f:
-        json.dump(mut_test_history, f)
+    # gex_train_history, _ = n_time_cv_regress(train_gex_data, 'gex_pred', n=5, model_fn=regress_with_enet,
+    #                                          test_data=None, random_state=2020)
+    #
+    # with open('./predictions/gex_pred.json', 'w') as f:
+    #     json.dump(gex_train_history, f)
+    #
+    # mut_train_history, mut_test_history = n_time_cv_regress(train_mut_data, 'mut_pred', n=5, model_fn=regress_with_enet,
+    #                                                         test_data=test_data, random_state=2020)
+    #
+    # with open('./predictions/mut_pred.json', 'w') as f:
+    #     json.dump(mut_train_history, f)
+    #
+    # with open('./predictions/test_mut_pred.json', 'w') as f:
+    #     json.dump(mut_test_history, f)
 
     both_train_history, _ = n_time_cv_regress(train_both_data, 'both_pred', n=5, model_fn=regress_with_enet,
                                              test_data=None, random_state=2020)
