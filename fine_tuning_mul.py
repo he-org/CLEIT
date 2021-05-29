@@ -40,7 +40,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     model.zero_grad()
     model.train()
 
-    x = batch[:-1].to(device)
+    x = torch.cat(batch[:-1],dim=1).to(device)
     y = batch[-1].to(device)
     # mse_loss = sum([F.mse_loss(torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), y[i, :]),
     #                            torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), model(x)[i, :]))
