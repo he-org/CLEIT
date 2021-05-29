@@ -5,6 +5,7 @@ from multi_out_mlp import MoMLP
 from encoder_decoder import EncoderDecoder
 from loss_and_metrics import masked_mse, masked_simse
 from vae import VAE
+from ae import AE
 from data import DataProvider
 import torch
 import json
@@ -16,8 +17,8 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     model.zero_grad()
     model.train()
 
-    x = batch[0].to(device)
-    y = batch[1].to(device)
+    x = torch.cat(batch[:-1],dim=1).to(device)
+    y = batch[-1].to(device)
     loss = masked_simse(preds=model(x), labels=y)
     optimizer.zero_grad()
     loss.backward()
@@ -36,7 +37,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
 def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=None,
                       metric_name='cpearsonr',
                       normalize_flag=False, **kwargs):
-    autoencoder = VAE(input_dim=kwargs['input_dim'],
+    autoencoder = AE(input_dim=kwargs['input_dim'],
                      latent_dim=kwargs['latent_dim'],
                      hidden_dims=kwargs['encoder_hidden_dims'],
                      dop=kwargs['dop']).to(kwargs['device'])
@@ -149,15 +150,30 @@ def main(args):
 
     training_params.update(
         {
-            'input_dim': data_provider.shape_dict[args.omics],
-            'output_dim': data_provider.shape_dict['target']
+           'output_dim': data_provider.shape_dict['target']
         }
     )
 
+    if args.omics == 'both':
+        training_params.update(
+            {
+                'input_dim': sum([data_provider.shape_dict[k] for k in data_provider.shape_dict if k != 'target']),
+                'latent_dim': 2*training_params['training_params'],
+                "encoder_hidden_dims": [2*x for x in training_params["encoder_hidden_dims"]]
+            }
+        )
+    else:
+        training_params.update(
+            {
+                'input_dim': data_provider.shape_dict[args.omics]
+            }
+        )
+
     ft_evaluation_metrics = defaultdict(list)
+    fold_count = 0
+
     if args.omics == 'gex':
         labeled_dataloader_generator = data_provider.get_drug_labeled_gex_dataloader()
-        fold_count = 0
         for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
             target_regressor, ft_historys = fine_tune_encoder(
                 train_dataloader=train_labeled_dataloader,
@@ -170,9 +186,8 @@ def main(args):
             for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
                 ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
             fold_count += 1
-    else:
+    elif args.omics == 'mut':
         labeled_dataloader_generator = data_provider.get_drug_labeled_mut_dataloader()
-        fold_count = 0
         test_ft_evaluation_metrics = defaultdict(list)
 
         for train_labeled_dataloader, val_labeled_dataloader, test_labeled_dataloader in labeled_dataloader_generator:
@@ -190,14 +205,29 @@ def main(args):
             fold_count += 1
         with open(os.path.join(training_params['model_save_folder'], f'test_ft_evaluation_results.json'), 'w') as f:
             json.dump(test_ft_evaluation_metrics, f)
+    else:
+        labeled_dataloader_generator = data_provider.get_labeled_data_generator(omics='both')
+        for train_labeled_dataloader, val_labeled_dataloader in labeled_dataloader_generator:
+            target_regressor, ft_historys = fine_tune_encoder(
+                train_dataloader=train_labeled_dataloader,
+                val_dataloader=val_labeled_dataloader,
+                test_dataloader=val_labeled_dataloader,
+                seed=fold_count,
+                metric_name=args.metric,
+                **wrap_training_params(training_params, type='labeled')
+            )
+            for metric in ['dpearsonr', 'dspearmanr','drmse', 'cpearsonr', 'cspearmanr','crmse']:
+                ft_evaluation_metrics[metric].append(ft_historys[-2][metric][ft_historys[-2]['best_index']])
+            fold_count += 1
+
     with open(os.path.join(training_params['model_save_folder'], f'ft_evaluation_results.json'), 'w') as f:
         json.dump(ft_evaluation_metrics, f)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('CLEIT training and evaluation')
-    parser.add_argument('--omics', dest='omics', nargs='?', default='gex',
-                        choices=['gex', 'mut'])
+    parser.add_argument('--omics', dest='omics', nargs='?', default='both',
+                        choices=['gex', 'mut', 'both'])
     # parser.add_argument('--drug', dest='drug', nargs='?', default='gem', choices=['gem', 'fu', 'cis', 'tem'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='cpearsonr', choices=['cpearsonr', 'dpearsonr'])
     parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
