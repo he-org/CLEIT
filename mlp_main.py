@@ -158,7 +158,7 @@ def main(args):
         training_params.update(
             {
                 'input_dim': sum([data_provider.shape_dict[k] for k in data_provider.shape_dict if k != 'target']),
-                'latent_dim': 2*training_params['training_params'],
+                'latent_dim': 2*training_params['latent_dim'],
                 "encoder_hidden_dims": [2*x for x in training_params["encoder_hidden_dims"]]
             }
         )
