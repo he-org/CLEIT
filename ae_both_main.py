@@ -72,14 +72,16 @@ def main(args, update_params_dict):
     training_params['unlabeled'].update(update_params_dict)
     param_str = dict_to_str(update_params_dict)
 
-    training_params.update(
-        {
-            'device': device,
-            'model_save_folder': os.path.join('model_save', 'ae_both', args.omics, param_str),
-            'es_flag': False,
-            'retrain_flag': args.retrain_flag
-        })
-    safe_make_dir(training_params['model_save_folder'])
+    if args.omics != 'both':
+        training_params.update(
+            {
+                'device': device,
+                'model_save_folder': os.path.join('model_save', 'ae', args.omics, param_str),
+                'es_flag': False,
+                'retrain_flag': args.retrain_flag
+            })
+        safe_make_dir(training_params['model_save_folder'])
+
     task_save_folder = os.path.join('model_save', 'ae', args.omics, param_str)
     safe_make_dir(task_save_folder)
 
@@ -87,17 +89,19 @@ def main(args, update_params_dict):
 
     data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'],
                                  target=args.measurement)
-    training_params.update(
-        {
-            'input_dim': data_provider.shape_dict[args.omics],
-            'output_dim': data_provider.shape_dict['target']
-        }
-    )
 
     if args.omics == 'both':
         training_params.update(
             {
                 'input_dim': sum([data_provider.shape_dict[k] for k in data_provider.shape_dict if k != 'target']),
+                'output_dim': data_provider.shape_dict['target']
+            }
+        )
+    else:
+        training_params.update(
+            {
+                'input_dim': data_provider.shape_dict[args.omics],
+                'output_dim': data_provider.shape_dict['target']
             }
         )
 
@@ -118,20 +122,30 @@ def main(args, update_params_dict):
             for history in historys:
                 pickle.dump(dict(history), f)
     else:
+        training_params.update(
+            {
+                'device': device,
+                'model_save_folder': os.path.join('model_save', 'ae', 'gex', param_str),
+                'es_flag': False,
+                'retrain_flag': args.retrain_flag
+            })
+        safe_make_dir(training_params['model_save_folder'])
+
         gex_encoder, gex_historys = train_fn(dataloader=data_provider.get_unlabeled_gex_dataloader(),
                                      **wrap_training_params(training_params, type='unlabeled'))
 
+        training_params.update(
+            {
+                'device': device,
+                'model_save_folder': os.path.join('model_save', 'ae', 'mut', param_str),
+                'es_flag': False,
+                'retrain_flag': args.retrain_flag
+            })
+        safe_make_dir(training_params['model_save_folder'])
+
         mut_encoder, mut_historys = train_fn(dataloader=data_provider.get_unlabeld_mut_dataloader(match=False),
                                      **wrap_training_params(training_params, type='unlabeled'))
-        with open(os.path.join(training_params['model_save_folder'], f'gex_unlabel_train_history.pickle'),
-                  'wb') as f:
-            for history in gex_historys:
-                pickle.dump(dict(history), f)
 
-        with open(os.path.join(training_params['model_save_folder'], f'mut_unlabel_train_history.pickle'),
-                  'wb') as f:
-            for history in mut_historys:
-                pickle.dump(dict(history), f)
 
     ft_evaluation_metrics = defaultdict(list)
     fold_count = 0
