@@ -144,7 +144,7 @@ def main(args):
             'device': device,
             'model_save_folder': os.path.join('model_save', 'mlp', args.omics),
         })
-
+    safe_make_dir(training_params['model_save_folder'])
     data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'],
                                  target=args.measurement)
 
