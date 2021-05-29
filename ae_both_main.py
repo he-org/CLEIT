@@ -71,6 +71,12 @@ def main(args, update_params_dict):
 
     training_params['unlabeled'].update(update_params_dict)
     param_str = dict_to_str(update_params_dict)
+    training_params.update(
+        {
+            'device': device,
+            'es_flag': False,
+            'retrain_flag': args.retrain_flag
+        })
 
     if args.omics != 'both':
         training_params.update(
@@ -100,10 +106,15 @@ def main(args, update_params_dict):
     # else:
     training_params.update(
         {
-            'input_dim': data_provider.shape_dict[args.omics],
             'output_dim': data_provider.shape_dict['target']
         }
     )
+    if args.omics != 'both':
+        training_params.update(
+            {
+                'input_dim': data_provider.shape_dict[args.omics],
+            }
+        )
 
     # start unlabeled training
     if args.omics == 'gex':
@@ -124,10 +135,8 @@ def main(args, update_params_dict):
     else:
         training_params.update(
             {
-                'device': device,
                 'model_save_folder': os.path.join('model_save', 'ae', 'gex', param_str),
-                'es_flag': False,
-                'retrain_flag': args.retrain_flag
+                'input_dim': data_provider.shape_dict['gex'],
             })
         safe_make_dir(training_params['model_save_folder'])
 
@@ -136,10 +145,8 @@ def main(args, update_params_dict):
 
         training_params.update(
             {
-                'device': device,
                 'model_save_folder': os.path.join('model_save', 'ae', 'mut', param_str),
-                'es_flag': False,
-                'retrain_flag': args.retrain_flag
+                'input_dim': data_provider.shape_dict['mut'],
             })
         safe_make_dir(training_params['model_save_folder'])
 
