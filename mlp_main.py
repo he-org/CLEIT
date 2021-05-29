@@ -60,7 +60,7 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
     target_regression_optimizer = torch.optim.AdamW(target_regressor.parameters(), lr=kwargs['lr'])
 
     for epoch in range(kwargs['train_num_epochs']):
-        if epoch % 50 == 0:
+        if epoch % 10 == 0:
             print(f'MLP fine-tuning epoch {epoch}')
         for step, batch in enumerate(train_dataloader):
             target_regression_train_history = regression_train_step(model=target_regressor,
@@ -85,7 +85,7 @@ def fine_tune_encoder(train_dataloader, val_dataloader, seed, test_dataloader=No
         save_flag, stop_flag = model_save_check(history=target_regression_eval_val_history,
                                                 metric_name=metric_name,
                                                 tolerance_count=50)
-        if save_flag:
+        if save_flag or epoch == 0:
             torch.save(target_regressor.state_dict(),
                        os.path.join(kwargs['model_save_folder'], f'target_regressor_{seed}.pt'))
             torch.save(target_regressor.encoder.state_dict(),
