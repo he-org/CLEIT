@@ -90,20 +90,20 @@ def main(args, update_params_dict):
     data_provider = DataProvider(batch_size=training_params['unlabeled']['batch_size'],
                                  target=args.measurement)
 
-    if args.omics == 'both':
-        training_params.update(
-            {
-                'input_dim': sum([data_provider.shape_dict[k] for k in data_provider.shape_dict if k != 'target']),
-                'output_dim': data_provider.shape_dict['target']
-            }
-        )
-    else:
-        training_params.update(
-            {
-                'input_dim': data_provider.shape_dict[args.omics],
-                'output_dim': data_provider.shape_dict['target']
-            }
-        )
+    # if args.omics == 'both':
+    #     training_params.update(
+    #         {
+    #             'input_dim': sum([data_provider.shape_dict[k] for k in data_provider.shape_dict if k != 'target']),
+    #             'output_dim': data_provider.shape_dict['target']
+    #         }
+    #     )
+    # else:
+    training_params.update(
+        {
+            'input_dim': data_provider.shape_dict[args.omics],
+            'output_dim': data_provider.shape_dict['target']
+        }
+    )
 
     # start unlabeled training
     if args.omics == 'gex':

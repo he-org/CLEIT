@@ -75,7 +75,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
 def fine_tune_encoder(encoders, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
                       metric_name='cpearsonr',
                       normalize_flag=False, **kwargs):
-    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+    target_decoder = MoMLP(input_dim=2*kwargs['latent_dim'],
                            output_dim=kwargs['output_dim'],
                            hidden_dims=kwargs['regressor_hidden_dims'],
                            out_fn=torch.nn.Sigmoid).to(kwargs['device'])
