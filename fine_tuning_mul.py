@@ -1,0 +1,257 @@
+from evaluation_utils import evaluate_target_regression_epoch, model_save_check
+from collections import defaultdict
+from itertools import chain
+from mlp import MLP
+from multi_encoder_decoder import MultiEncoderDecoder
+from multi_out_mlp import MoMLP
+from encoder_decoder import EncoderDecoder
+from torch.nn import functional as F
+from loss_and_metrics import masked_mse, masked_simse
+import os
+import torch
+
+
+def classification_train_step(model, batch, loss_fn, device, optimizer, history, scheduler=None, clip=None):
+    model.zero_grad()
+    model.train()
+
+    x = torch.cat(batch[:-1],dim=1).to(device)
+    y = batch[-1].to(device)
+    loss = loss_fn(model(x), y.double().unsqueeze(1))
+
+    optimizer.zero_grad()
+    loss.backward()
+    if clip is not None:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
+
+    optimizer.step()
+    if scheduler is not None:
+        scheduler.step()
+
+    history['bce'].append(loss.cpu().detach().item())
+
+    return history
+
+
+def regression_train_step(model, batch, device, optimizer, history, scheduler=None, clip=None):
+    # gc.collect()
+    # torch.cuda.empty_cache()
+
+    model.zero_grad()
+    model.train()
+
+    x = batch[:-1].to(device)
+    y = batch[-1].to(device)
+    # mse_loss = sum([F.mse_loss(torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), y[i, :]),
+    #                            torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), model(x)[i, :]))
+    #                 for i in range(y.shape[0])])
+    # penalty_term = sum([torch.square(torch.sum(
+    #     torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), y[i, :]) -
+    #     torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), model(x)[i, :]))) / torch.square(
+    #     (~torch.isnan(y[i, :])).sum())
+    #                     for i in range(y.shape[0])])
+    #
+    # loss = (mse_loss-penalty_term) / y.shape[0]
+    loss = masked_simse(preds=model(x), labels=y)
+    optimizer.zero_grad()
+    loss.backward()
+    if clip is not None:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
+    # with torch.no_grad():
+    #     mask_module_indices = [i for i in range(len(list(model.decoder.modules())))
+    #                            if str(list(model.decoder.modules())[i]).startswith('MaskedLinear')]
+    #     for index in mask_module_indices:
+    #         list(model.decoder.modules())[index].linear.weight.grad.mul_(list(model.decoder.modules())[index].mask)
+
+    optimizer.step()
+    if scheduler is not None:
+        scheduler.step()
+
+    history['loss'].append(loss.cpu().detach().item())
+
+    return history
+
+
+def fine_tune_encoder(encoders, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
+                      metric_name='cpearsonr',
+                      normalize_flag=False, **kwargs):
+    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+                           output_dim=kwargs['output_dim'],
+                           hidden_dims=kwargs['regressor_hidden_dims'],
+                           out_fn=torch.nn.Sigmoid).to(kwargs['device'])
+
+    target_regressor = MultiEncoderDecoder(encoders=encoders,
+                                      decoder=target_decoder,
+                                      normalize_flag=normalize_flag).to(kwargs['device'])
+
+    target_regression_train_history = defaultdict(list)
+    target_regression_eval_train_history = defaultdict(list)
+    target_regression_eval_val_history = defaultdict(list)
+    target_regression_eval_test_history = defaultdict(list)
+
+    encoder_module_indices_dict = defaultdict(list)
+    count = 0
+    for encoder in encoders:
+        encoder_module_indices = [i for i in range(len(list(encoder.modules())))
+                              if str(list(encoder.modules())[i]).startswith('Linear')]
+        encoder_module_indices_dict[count] = encoder_module_indices
+        count += 1
+
+    reset_count = 1
+    lr = kwargs['lr']
+
+    target_regression_params = [target_regressor.decoder.parameters()]
+    target_regression_optimizer = torch.optim.AdamW(chain(*target_regression_params),
+                                                    lr=lr)
+
+    for epoch in range(kwargs['train_num_epochs']):
+        if epoch % 50 == 0:
+            print(f'Fine tuning epoch {epoch}')
+        for step, batch in enumerate(train_dataloader):
+            target_regression_train_history = regression_train_step(model=target_regressor,
+                                                                    batch=batch,
+                                                                    device=kwargs['device'],
+                                                                    optimizer=target_regression_optimizer,
+                                                                    history=target_regression_train_history)
+        target_regression_eval_train_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                                dataloader=train_dataloader,
+                                                                                device=kwargs['device'],
+                                                                                history=target_regression_eval_train_history)
+        target_regression_eval_val_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                              dataloader=val_dataloader,
+                                                                              device=kwargs['device'],
+                                                                              history=target_regression_eval_val_history)
+
+        if test_dataloader is not None:
+            target_regression_eval_test_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                                   dataloader=test_dataloader,
+                                                                                   device=kwargs['device'],
+                                                                                   history=target_regression_eval_test_history)
+        save_flag, stop_flag = model_save_check(history=target_regression_eval_val_history,
+                                                metric_name=metric_name,
+                                                tolerance_count=10,
+                                                reset_count=reset_count)
+        if save_flag:
+            torch.save(target_regressor.state_dict(),
+                       os.path.join(task_save_folder, f'target_regressor_{seed}.pt'))
+
+            torch.save(target_regressor.encoder.state_dict(),
+                       os.path.join(task_save_folder, f'ft_encoder_{seed}.pt'))
+
+        if stop_flag:
+            try:
+                print(f'Unfreezing {epoch}')
+                target_regressor.load_state_dict(
+                    torch.load(os.path.join(task_save_folder, f'target_regressor_{seed}.pt')))
+
+                for encoder_ind, indices in encoder_module_indices_dict.items():
+                    ind = indices.pop()
+                    target_regression_params.append(list(target_regressor.encoders[count].modules())[ind].parameters())
+                lr = lr * kwargs['decay_coefficient']
+                target_regression_optimizer = torch.optim.AdamW(chain(*target_regression_params), lr=lr)
+                reset_count += 1
+            except IndexError:
+                break
+
+    target_regressor.load_state_dict(
+        torch.load(os.path.join(task_save_folder, f'target_regressor_{seed}.pt')))
+
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=val_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     cv_flag=True,
+                                     output_folder=kwargs['model_save_folder'])
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=test_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     output_folder=kwargs['model_save_folder'])
+
+    return target_regressor, (target_regression_train_history, target_regression_eval_train_history,
+                              target_regression_eval_val_history, target_regression_eval_test_history)
+
+
+def fine_tune_encoder_new(encoder, train_dataloader, val_dataloader, seed, task_save_folder, test_dataloader=None,
+                          normalize_flag=False, **kwargs):
+    target_decoder = MoMLP(input_dim=kwargs['latent_dim'],
+                           output_dim=kwargs['output_dim'],
+                           hidden_dims=kwargs['regressor_hidden_dims'],
+                           out_fn=torch.nn.Sigmoid).to(kwargs['device'])
+
+    target_regressor = EncoderDecoder(encoder=encoder,
+                                      decoder=target_decoder,
+                                      normalize_flag=normalize_flag).to(kwargs['device'])
+
+    target_regressor.load_state_dict(torch.load(os.path.join('./model_save', f'target_regressor_{seed}.pt')))
+
+    target_regression_train_history = defaultdict(list)
+    target_regression_eval_train_history = defaultdict(list)
+    target_regression_eval_val_history = defaultdict(list)
+    target_regression_eval_test_history = defaultdict(list)
+
+    encoder_module_indices = [i for i in range(len(list(encoder.modules())))
+                              if str(list(encoder.modules())[i]).startswith('Linear')]
+
+    lr = kwargs['lr']
+
+    target_regression_params = [target_regressor.decoder.parameters()]
+    target_regression_optimizer = torch.optim.AdamW(chain(*target_regression_params),
+                                                    lr=lr)
+    gu_flag = True
+    for epoch in range(kwargs['train_num_epochs']):
+        if epoch % 50 == 0:
+            print(f'Fine tuning epoch {epoch}')
+        for step, batch in enumerate(train_dataloader):
+            target_regression_train_history = regression_train_step(model=target_regressor,
+                                                                    batch=batch,
+                                                                    device=kwargs['device'],
+                                                                    optimizer=target_regression_optimizer,
+                                                                    history=target_regression_train_history)
+        target_regression_eval_train_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                                dataloader=train_dataloader,
+                                                                                device=kwargs['device'],
+                                                                                history=target_regression_eval_train_history)
+        target_regression_eval_val_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                              dataloader=val_dataloader,
+                                                                              device=kwargs['device'],
+                                                                              history=target_regression_eval_val_history)
+
+        if test_dataloader is not None:
+            target_regression_eval_test_history = evaluate_target_regression_epoch(regressor=target_regressor,
+                                                                                   dataloader=test_dataloader,
+                                                                                   device=kwargs['device'],
+                                                                                   history=target_regression_eval_test_history)
+
+        if epoch >= 0.5 * kwargs['train_num_epochs'] and epoch % 10 == 0 and gu_flag:
+            try:
+                ind = encoder_module_indices.pop()
+                print(f'Unfreezing {epoch}')
+                target_regression_params.append(list(target_regressor.encoder.modules())[ind].parameters())
+                lr = lr * kwargs['decay_coefficient']
+                target_regression_optimizer = torch.optim.AdamW(chain(*target_regression_params), lr=lr)
+            except IndexError:
+                gu_flag = False
+
+    torch.save(target_regressor.state_dict(),
+               os.path.join(task_save_folder, f'target_regressor_{seed}.pt'))
+
+    evaluate_target_regression_epoch(regressor=target_regressor,
+                                     dataloader=val_dataloader,
+                                     device=kwargs['device'],
+                                     history=None,
+                                     seed=seed,
+                                     cv_flag=True,
+                                     output_folder=kwargs['model_save_folder'])
+    if test_dataloader is not None:
+        evaluate_target_regression_epoch(regressor=target_regressor,
+                                         dataloader=test_dataloader,
+                                         device=kwargs['device'],
+                                         history=None,
+                                         seed=seed,
+                                         output_folder=kwargs['model_save_folder'])
+
+    return target_regressor, (target_regression_train_history, target_regression_eval_train_history,
+                              target_regression_eval_val_history, target_regression_eval_test_history)

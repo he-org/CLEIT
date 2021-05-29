@@ -165,6 +165,36 @@ class DataProvider:
                                                      shuffle=True)
 
                 yield train_labeled_dataloader, test_labeled_dataloader
+        elif omics == 'both':
+            for train_index, test_index in s_kfold.split(self.gex_dat.loc[labeled_samples].values,
+                                                         sample_label_vec):
+                gex_train_labeled_df, gex_test_labeled_df = self.gex_dat.loc[labeled_samples].values[train_index], \
+                                                    self.gex_dat.loc[labeled_samples].values[test_index]
+                mut_train_labeled_df, mut_test_labeled_df = self.mut_dat.loc[labeled_samples].values[train_index], \
+                                                    self.mut_dat.loc[labeled_samples].values[test_index]
+                train_labels, test_labels = labeled_target_df.values[train_index].astype('float32'), \
+                                            labeled_target_df.values[
+                                                test_index].astype('float32')
+
+                train_labeled_dateset = TensorDataset(
+                    torch.from_numpy(gex_train_labeled_df.astype('float32')),
+                    torch.from_numpy(mut_train_labeled_df.astype('float32')),
+                    torch.from_numpy(train_labels))
+                test_labeled_dateset = TensorDataset(
+                    torch.from_numpy(gex_test_labeled_df.astype('float32')),
+                    torch.from_numpy(mut_test_labeled_df.astype('float32')),
+                    torch.from_numpy(test_labels))
+
+                train_labeled_dataloader = DataLoader(train_labeled_dateset,
+                                                      batch_size=self.batch_size,
+                                                      shuffle=True, drop_last=True)
+
+                test_labeled_dataloader = DataLoader(test_labeled_dateset,
+                                                     batch_size=self.batch_size,
+                                                     shuffle=True)
+
+                yield train_labeled_dataloader, test_labeled_dataloader
+
         else:
             for train_index, test_index in s_kfold.split(self.ccle_mut_dat.loc[labeled_samples].values,
                                                          sample_label_vec):

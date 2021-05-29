@@ -78,9 +78,10 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history, out
     y_preds = None
     regressor.eval()
 
-    for x_batch, y_batch in dataloader:
-        x_batch = x_batch.to(device)
-        y_batch = y_batch.to(device)
+    for step, batch in enumerate(dataloader):
+        x_batch = torch.cat(batch[:-1], dim=1).to(device)
+        y_batch = batch[-1].to(device)
+
         with torch.no_grad():
             y_truths = np.vstack(
                 [y_truths, y_batch.cpu().detach().numpy()]) if y_truths is not None else y_batch.cpu().detach().numpy()
