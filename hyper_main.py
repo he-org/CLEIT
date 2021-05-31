@@ -88,7 +88,7 @@ def main(args, update_params_dict):
     training_params.update(
         {
             'device': device,
-            'model_save_folder': os.path.join('model_save', args.method, param_str),
+            'model_save_folder': os.path.join('model_save', args.method+'500', param_str),
             'es_flag': False,
             'retrain_flag': args.retrain_flag
         })

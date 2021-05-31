@@ -47,7 +47,7 @@ def build_encoder(args):
     training_params.update(
         {
             'device': device,
-            'model_save_folder': os.path.join('model_save', 'vae'),
+            'model_save_folder': os.path.join('model_save', 'ae500'),
             'es_flag': False,
             'retrain_flag': True
         })
