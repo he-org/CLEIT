@@ -98,6 +98,8 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history, out
             pd.DataFrame(y_truths).to_csv(f'{output_folder}/truths_{seed}.csv')
             pd.DataFrame(y_preds).to_csv(f'{output_folder}/preds_{seed}.csv')
     else:
+        print(y_truths)
+        print(y_preds)
         history['dpearsonr'].append(np.mean(np.abs([pearsonr(y_truths[:, i][~ma.masked_invalid(y_truths[:, i]).mask],
                                                       y_preds[:, i][~ma.masked_invalid(y_truths[:, i]).mask])[0]
                                              for i in range(y_truths.shape[1])])).item())
