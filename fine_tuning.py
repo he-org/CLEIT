@@ -39,8 +39,10 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     model.zero_grad()
     model.train()
 
-    x = batch[0].to(device)
-    y = batch[1].to(device)
+    x = torch.cat(batch[:-1], dim=1).to(device)
+    print(x)
+    y = batch[-1].to(device)
+    print(y)
     # mse_loss = sum([F.mse_loss(torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), y[i, :]),
     #                            torch.where(torch.isnan(y[i, :]), torch.zeros_like(y[i, :]), model(x)[i, :]))
     #                 for i in range(y.shape[0])])
@@ -52,7 +54,7 @@ def regression_train_step(model, batch, device, optimizer, history, scheduler=No
     #
     # loss = (mse_loss-penalty_term) / y.shape[0]
     loss = masked_simse(preds=model(x), labels=y)
-    print(loss)
+
     optimizer.zero_grad()
     loss.backward()
     if clip is not None:

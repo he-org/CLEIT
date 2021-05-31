@@ -86,7 +86,6 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history, out
             y_truths = np.vstack(
                 [y_truths, y_batch.cpu().detach().numpy()]) if y_truths is not None else y_batch.cpu().detach().numpy()
             y_pred = regressor(x_batch).detach()
-            print(y_pred)
             y_preds = np.vstack([y_preds,
                                  y_pred.cpu().detach().numpy()]) if y_preds is not None else y_pred.cpu().detach().numpy()
     assert (y_truths.shape == y_preds.shape)
