@@ -79,7 +79,7 @@ def main(args, update_params_dict):
             'retrain_flag': args.retrain_flag
         })
     safe_make_dir(training_params['model_save_folder'])
-    task_save_folder = os.path.join('model_save', 'vae500', args.omics, param_str)
+    task_save_folder = os.path.join('model_save', 'vae2000', args.omics, param_str)
     safe_make_dir(task_save_folder)
 
     random.seed(2020)
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     train_group = parser.add_mutually_exclusive_group(required=False)
     train_group.add_argument('--train', dest='retrain_flag', action='store_true')
     train_group.add_argument('--no-train', dest='retrain_flag', action='store_false')
-    parser.set_defaults(retrain_flag=False)
+    parser.set_defaults(train=False)
 
     args = parser.parse_args()
 
