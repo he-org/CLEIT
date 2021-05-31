@@ -79,7 +79,7 @@ def main(args, update_params_dict):
             'retrain_flag': args.retrain_flag
         })
     safe_make_dir(training_params['model_save_folder'])
-    task_save_folder = os.path.join('model_save', 'vae5000', args.omics, param_str)
+    task_save_folder = os.path.join('model_save', 'vae500', args.omics, param_str)
     safe_make_dir(task_save_folder)
 
     random.seed(2020)
