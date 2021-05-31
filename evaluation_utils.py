@@ -86,6 +86,7 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history, out
             y_truths = np.vstack(
                 [y_truths, y_batch.cpu().detach().numpy()]) if y_truths is not None else y_batch.cpu().detach().numpy()
             y_pred = regressor(x_batch).detach()
+            print(y_pred)
             y_preds = np.vstack([y_preds,
                                  y_pred.cpu().detach().numpy()]) if y_preds is not None else y_pred.cpu().detach().numpy()
     assert (y_truths.shape == y_preds.shape)
@@ -98,8 +99,6 @@ def evaluate_target_regression_epoch(regressor, dataloader, device, history, out
             pd.DataFrame(y_truths).to_csv(f'{output_folder}/truths_{seed}.csv')
             pd.DataFrame(y_preds).to_csv(f'{output_folder}/preds_{seed}.csv')
     else:
-        print(y_truths)
-        print(y_preds)
         history['dpearsonr'].append(np.mean(np.abs([pearsonr(y_truths[:, i][~ma.masked_invalid(y_truths[:, i]).mask],
                                                       y_preds[:, i][~ma.masked_invalid(y_truths[:, i]).mask])[0]
                                              for i in range(y_truths.shape[1])])).item())
