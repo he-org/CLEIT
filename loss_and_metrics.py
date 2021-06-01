@@ -46,7 +46,7 @@ def masked_simse(preds, labels, null_val=np.nan):
     diffs = torch.where(torch.isnan(diffs), torch.zeros_like(diffs), diffs)
     penalty = torch.sum(torch.square(torch.sum(diffs, dim=0, keepdim=True)) / torch.square(mask_k)) / mask.shape[1]
 
-    return mse_loss - 0.1*penalty
+    return mse_loss - 0.1 * penalty
 
 
 def cov(m, rowvar=False):
@@ -133,21 +133,25 @@ def mmd_loss(source_features, target_features, device):
 def compute_cosine_distances_matrix(x, y):
     normalize_x = F.normalize(x, p=2, dim=1)
     normalize_y = F.normalize(y, p=2, dim=1)
-    sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0,1)) + 1.0
+    sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0, 1)) + 1.0
     return sim_matrix
 
 
 def contrastive_loss(y_true, y_pred, device):
     sim_matrix = compute_cosine_distances_matrix(y_true, y_pred)
-
-    denominator = torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
-            torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
-                          torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
-    nominator = torch.sum(torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
-    #nominator = torch.nan_to_num(nominator, nan=0.0)
-    #denominator = torch.nan_to_num(denominator, nan=0.0)
+    denominator = torch.logsumexp(torch.mul(sim_matrix, -1 * (
+            torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), 1) + torch.logsumexp(
+        torch.mul(sim_matrix, -1 * (
+                torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), 0)
+    nominator = torch.sum(
+        torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
+    # nominator = torch.nan_to_num(nominator, nan=0.0)
+    # denominator = torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
+    #         torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
+    #         torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
+    # denominator = torch.nan_to_num(denominator, nan=0.0)
     if torch.isnan(denominator).any():
         print(sim_matrix)
         print(denominator)
         print(nominator)
-    return -torch.mean(torch.log(nominator) - torch.log(denominator))
+    return -torch.mean(torch.log(nominator) - denominator)
