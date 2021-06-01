@@ -32,6 +32,9 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     if torch.isnan(x_m_code).any():
         print(x_m_code)
         print(x_g_code)
+        print(list(ae.encoder.modules())[0][-1].weight)
+        print(list(ae.encoder.modules())[0][-1].weight.grad)
+        print("="*20)
 
     optimizer.zero_grad()
 
@@ -41,7 +44,6 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     #     transmitter.parameters()
     # ]
     # torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
-    #print(list(ae.encoder.modules())[0][0][0].weight.grad)
 
     optimizer.step()
     #torch.autograd.set_detect_anomaly(True)
