@@ -133,7 +133,7 @@ def mmd_loss(source_features, target_features, device):
 def compute_cosine_distances_matrix(x, y):
     normalize_x = F.normalize(x, p=2, dim=1)
     normalize_y = F.normalize(y, p=2, dim=1)
-    sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0,1))
+    sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0,1)) + 1.0
     return sim_matrix
 
 
