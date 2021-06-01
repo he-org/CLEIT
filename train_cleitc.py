@@ -89,10 +89,10 @@ def train_cleitc(dataloader, seed, **kwargs):
             autoencoder.parameters(),
             transmitter.parameters()
         ]
-        cleit_optimizer = torch.optim.AdamW(chain(*cleit_params), lr=kwargs['lr'])
+        cleit_optimizer = torch.optim.AdamW(chain(*cleit_params), lr=0.01*kwargs['lr'])
         # start autoencoder pretraining
         for epoch in range(int(kwargs['train_num_epochs'])):
-            if epoch % 50 == 0:
+            if epoch % 1 == 0:
                 print(f'----Autoencoder Training Epoch {epoch} ----')
             for step, batch in enumerate(dataloader):
                 ae_eval_train_history = cleit_train_step(ae=autoencoder,
