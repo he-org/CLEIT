@@ -26,11 +26,12 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     x_m_code = transmitter(ae.encoder(x_m))
     x_g_code = reference_encoder(x_g)
 
-    print(x_m_code)
+    code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
+    loss = loss_dict['loss'] + code_loss
 
-    #code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
-    #loss = loss_dict['loss'] + code_loss
-    loss = loss_dict['loss']
+    if torch.isnan(x_m_code).any():
+        print(x_m_code)
+        print(x_g_code)
 
     optimizer.zero_grad()
 
@@ -49,7 +50,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
 
     for k, v in loss_dict.items():
         history[k].append(v)
-    #history['code_loss'].append(code_loss.cpu().detach().item())
+    history['code_loss'].append(code_loss.cpu().detach().item())
     return history
 
 
