@@ -139,12 +139,10 @@ def compute_cosine_distances_matrix(x, y):
 
 def contrastive_loss(y_true, y_pred, device):
     sim_matrix = compute_cosine_distances_matrix(y_true, y_pred)
+    print(sim_matrix)
     denominator = torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
             torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
                           torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
     nominator = torch.sum(torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
-
-    print(nominator)
-    print(denominator)
 
     return -torch.mean(torch.log(nominator) - torch.log(denominator))
