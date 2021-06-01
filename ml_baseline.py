@@ -325,7 +325,7 @@ if __name__ == '__main__':
                                              test_data=None, random_state=2020)
 
     with open('./predictions/both_pred.json', 'w') as f:
-        json.dump(gex_train_history, f)
+        json.dump(both_train_history, f)
 
 
 
