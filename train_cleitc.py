@@ -36,9 +36,10 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     #     transmitter.parameters()
     # ]
     # torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
-    print(list(ae.encoder.modules())[0][0][0].weight.grad)
+    #print(list(ae.encoder.modules())[0][0][0].weight.grad)
 
     optimizer.step()
+    torch.autograd.set_detect_anomaly(True)
     if scheduler is not None:
         scheduler.step()
 
