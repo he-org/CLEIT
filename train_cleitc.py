@@ -29,7 +29,6 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
     loss = loss_dict['loss'] + code_loss
     optimizer.zero_grad()
-    print(list(ae.encoder.modules())[0][0][0].weight.grad)
 
     loss.backward()
     # cleit_params = [
@@ -37,6 +36,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     #     transmitter.parameters()
     # ]
     # torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
+    print(list(ae.encoder.modules())[0][0][0].weight.grad)
 
     optimizer.step()
     if scheduler is not None:
