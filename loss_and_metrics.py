@@ -144,7 +144,9 @@ def contrastive_loss(y_true, y_pred, device):
             torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
                           torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
     nominator = torch.sum(torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
-    if torch.isnan(sim_matrix).any():
+    #nominator = torch.nan_to_num(nominator, nan=0.0)
+    #denominator = torch.nan_to_num(denominator, nan=0.0)
+    if torch.isnan(nominator).any():
         print(sim_matrix)
         print(denominator)
         print(nominator)
