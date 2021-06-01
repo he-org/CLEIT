@@ -29,16 +29,14 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
     loss = loss_dict['loss'] + code_loss
 
-    if torch.isnan(x_m_code).any():
-        print(x_m_code)
-        print(x_g_code)
-        print(list(ae.encoder.modules())[0][-1].weight)
-        print(list(ae.encoder.modules())[0][-1].weight.grad)
-        print("="*20)
-
     optimizer.zero_grad()
 
     loss.backward()
+    if torch.isnan(x_m_code).any():
+        print(x_m_code)
+        print(torch.isnan(list(ae.encoder.modules())[0][-1].weight).any())
+        print(list(ae.encoder.modules())[0][-1].weight.grad)
+        print("="*20)
     # cleit_params = [
     #     ae.parameters(),
     #     transmitter.parameters()
