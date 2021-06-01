@@ -37,7 +37,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
         ae.parameters(),
         transmitter.parameters()
     ]
-    torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 1.0)
+    torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
 
     optimizer.step()
     if scheduler is not None:
