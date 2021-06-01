@@ -134,7 +134,8 @@ def compute_cosine_distances_matrix(x, y):
     normalize_x = F.normalize(x, p=2, dim=1)
     normalize_y = F.normalize(y, p=2, dim=1)
     sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0, 1)) + 1.0
-    sim_matrix = torch.nan_to_num(sim_matrix, nan=0.0)
+    sim_matrix = sim_matrix[torch.isnan(sim_matrix)] = 0
+    #sim_matrix = torch.nan_to_num(sim_matrix, nan=0.0)
     return sim_matrix
 
 
@@ -153,4 +154,4 @@ def contrastive_loss(y_true, y_pred, device):
         print(torch.isnan(sim_matrix).any())
         print(denominator)
         print(nominator)
-    return -torch.mean(torch.log(nominator) - denominator)
+    return -torch.mean(torch.log(nominator) - torch.log(denominator))
