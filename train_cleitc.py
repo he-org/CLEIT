@@ -36,6 +36,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
         print(loss_dict)
         print(code_loss)
         print(torch.sum(torch.isnan(x_m_code),dim=1))
+        print(torch.isnan(x_m).any())
         print(torch.isnan(list(ae.encoder.modules())[0][-1].weight).any())
         print(list(ae.encoder.modules())[0][-1].weight.grad)
         print("="*20)
