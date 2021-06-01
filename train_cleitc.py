@@ -27,9 +27,11 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     x_g_code = reference_encoder(x_g)
 
     print(x_m_code)
-    
-    code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
-    loss = loss_dict['loss'] + code_loss
+
+    #code_loss = contrastive_loss(y_true=x_g_code, y_pred=transmitter(x_m_code), device=device)
+    #loss = loss_dict['loss'] + code_loss
+    loss = loss_dict['loss']
+
     optimizer.zero_grad()
 
     loss.backward()
