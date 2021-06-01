@@ -134,28 +134,23 @@ def compute_cosine_distances_matrix(x, y):
     normalize_x = F.normalize(x, p=2, dim=1)
     normalize_y = F.normalize(y, p=2, dim=1)
     sim_matrix = torch.matmul(normalize_x, normalize_y.transpose(0, 1)) + 1.0
+    sim_matrix = torch.nan_to_num(sim_matrix, nan=0.0)
     return sim_matrix
 
 
 def contrastive_loss(y_true, y_pred, device):
     sim_matrix = compute_cosine_distances_matrix(y_true, y_pred)
-    denominator = torch.logsumexp(torch.mul(sim_matrix, -1 * (
-            torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), 1) + torch.logsumexp(
-        torch.mul(sim_matrix, -1 * (
-                torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), 0)
+    denominator = torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
+            torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
+            torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
     nominator = torch.sum(
         torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
     # nominator = torch.nan_to_num(nominator, nan=0.0)
-    # denominator = torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
-    #         torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0) + torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
-    #         torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
     # denominator = torch.nan_to_num(denominator, nan=0.0)
     if torch.isnan(denominator).any():
-        print(torch.mul(torch.exp(sim_matrix), -1 * (
-             torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)))
-        print(torch.sum(torch.mul(torch.exp(sim_matrix), -1 * (
-             torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=0))
-        print(sim_matrix)
+        print(torch.isnan(y_true).any())
+        print(torch.isnan(y_pred).any())
+        print(torch.isnan(sim_matrix).any())
         print(denominator)
         print(nominator)
     return -torch.mean(torch.log(nominator) - denominator)
