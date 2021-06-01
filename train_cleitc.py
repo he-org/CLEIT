@@ -33,11 +33,11 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     print(x_g_code)
 
     loss.backward()
-    cleit_params = [
-        ae.parameters(),
-        transmitter.parameters()
-    ]
-    torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
+    # cleit_params = [
+    #     ae.parameters(),
+    #     transmitter.parameters()
+    # ]
+    # torch.nn.utils.clip_grad_norm_(chain(*cleit_params), 0.1)
 
     optimizer.step()
     if scheduler is not None:
@@ -82,7 +82,7 @@ def train_cleitc(dataloader, seed, **kwargs):
             autoencoder.parameters(),
             transmitter.parameters()
         ]
-        cleit_optimizer = torch.optim.AdamW(chain(*cleit_params), lr=kwargs['lr'])
+        cleit_optimizer = torch.optim.AdamW(chain(*cleit_params), lr=0.1*kwargs['lr'])
         # start autoencoder pretraining
         for epoch in range(int(kwargs['train_num_epochs'])):
             if epoch % 50 == 0:
