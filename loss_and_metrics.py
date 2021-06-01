@@ -144,4 +144,7 @@ def contrastive_loss(y_true, y_pred, device):
                           torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device) - 1)), dim=1)
     nominator = torch.sum(torch.mul(torch.exp(sim_matrix), torch.eye(n=sim_matrix.shape[0], dtype=torch.float32).to(device)), dim=0)
 
+    print(nominator)
+    print(denominator)
+
     return -torch.mean(torch.log(nominator) - torch.log(denominator))

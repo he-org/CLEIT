@@ -39,7 +39,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     #print(list(ae.encoder.modules())[0][0][0].weight.grad)
 
     optimizer.step()
-    torch.autograd.set_detect_anomaly(True)
+    #torch.autograd.set_detect_anomaly(True)
     if scheduler is not None:
         scheduler.step()
 
