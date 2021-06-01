@@ -30,8 +30,7 @@ def cleit_train_step(ae, reference_encoder, transmitter, batch, device, optimize
     loss = loss_dict['loss'] + code_loss
     optimizer.zero_grad()
     print(code_loss.item())
-    print(x_g_code)
-    print(list(ae.encoder.modules())[0][0].weight.grad)
+    print(list(ae.encoder.modules())[0])
 
     loss.backward()
     # cleit_params = [
