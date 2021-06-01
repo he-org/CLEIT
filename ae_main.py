@@ -74,12 +74,12 @@ def main(args, update_params_dict):
     training_params.update(
         {
             'device': device,
-            'model_save_folder': os.path.join('model_save', 'ae5000', args.omics, param_str),
+            'model_save_folder': os.path.join('model_save', 'ae500', args.omics, param_str),
             'es_flag': False,
             'retrain_flag': args.retrain_flag
         })
     safe_make_dir(training_params['model_save_folder'])
-    task_save_folder = os.path.join('model_save', 'ae5000', args.omics, param_str)
+    task_save_folder = os.path.join('model_save', 'ae500', args.omics, param_str)
     safe_make_dir(task_save_folder)
 
     random.seed(2020)
