@@ -88,11 +88,11 @@ def main(args, update_params_dict):
     training_params.update(
         {
             'device': device,
-            'model_save_folder': os.path.join('model_save', args.method+'2000', param_str),
+            'model_save_folder': os.path.join('model_save', args.method+'5000', param_str),
             'es_flag': False,
             'retrain_flag': args.retrain_flag
         })
-    task_save_folder = os.path.join('model_save', args.method+'2000', args.measurement)
+    task_save_folder = os.path.join('model_save', args.method+'5000', args.measurement)
 
     safe_make_dir(training_params['model_save_folder'])
     safe_make_dir(task_save_folder)
