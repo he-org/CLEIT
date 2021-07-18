@@ -6,9 +6,9 @@ configuration file includes all related multi-omics datasets
 root_data_folder = './data'
 raw_data_folder = os.path.join(root_data_folder, 'raw_dat')
 preprocessed_data_folder = os.path.join(root_data_folder, 'preprocessed_dat')
-gex_feature_file = os.path.join(preprocessed_data_folder, 'features/uq1000_gex_feature.csv')
-xena_mut_uq_file = os.path.join(preprocessed_data_folder, 'features/xena_uq_mut.csv')
-ccle_mut_uq_file = os.path.join(preprocessed_data_folder, 'features/ccle_uq_mut.csv')
+gex_feature_file = os.path.join(preprocessed_data_folder, 'uq1000_gex_feature.csv')
+xena_mut_uq_file = os.path.join(preprocessed_data_folder, 'xena_uq_mut.csv')
+ccle_mut_uq_file = os.path.join(preprocessed_data_folder, 'ccle_uq_mut.csv')
 
 #mapping_file = os.path.join(raw_data_folder, 'mart_export.txt')
 gene_feature_file = os.path.join(preprocessed_data_folder, 'CosmicHGNC_list.tsv')
