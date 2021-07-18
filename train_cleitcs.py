@@ -98,6 +98,8 @@ def train_cleitcs(s_dataloaders, t_dataloaders, val_dataloader, test_dataloader,
         for step, s_batch in enumerate(s_train_dataloader):
             t_batch = next(iter(t_train_dataloader))
             train_history = cleit_train_step(model=target_regressor,
+                                             transmitter=transmitter,
+                                             reference_encoder=reference_encoder,
                                              s_batch=s_batch,
                                              t_batch=t_batch,
                                              device=kwargs['device'],
