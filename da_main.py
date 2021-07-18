@@ -13,6 +13,7 @@ import train_coral
 import train_dann
 import train_dcc
 import train_adda
+import train_cleitcs
 from copy import deepcopy
 
 
@@ -71,6 +72,8 @@ def main(args):
         train_fn = train_adda.train_adda
     elif args.method == 'dcc':
         train_fn = train_dcc.train_dcc
+    elif args.method == 'cleitcs':
+        train_fn = train_cleitcs.train_cleitcs
     else:
         train_fn = train_coral.train_coral
 
@@ -126,8 +129,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Domain adaptation training and evaluation')
-    parser.add_argument('--method', dest='method', nargs='?', default='coral',
-                        choices=['dcc', 'dann', 'coral', 'adda'])
+    parser.add_argument('--method', dest='method', nargs='?', default='cleitcs',
+                        choices=['dcc', 'dann', 'coral', 'adda', 'cleitcs'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='cpearsonr', choices=['cpearsonr', 'dpearsonr'])
     parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
     parser.add_argument('--n', dest='n', nargs='?', type=int, default=5)

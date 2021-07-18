@@ -105,7 +105,7 @@ def move_encoder(args):
 
     for file in os.listdir(f'./model_save/ae/gex/{param_str}'):
         if file.startswith('ft_encoder') or file.startswith('target_regressor'):
-            shutil.copyfile(os.path.join(f'./model_save/ae5000/gex/{param_str}', file), os.path.join('./model_save/ae5000', file))
+            shutil.copyfile(os.path.join(f'./model_save/ae/gex/{param_str}', file), os.path.join('./model_save/ae', file))
 
 
 if __name__ == '__main__':
